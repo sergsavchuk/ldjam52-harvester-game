@@ -1,8 +1,8 @@
 import 'package:flame/events.dart';
-import 'package:flame/game.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flametest/player.dart';
 
-class SpaceShooterGame extends FlameGame with PanDetector {
+class MyGame extends Forge2DGame with PanDetector {
   late Player player;
 
   @override
