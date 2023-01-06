@@ -1,5 +1,5 @@
 import 'package:flame/components.dart';
-import 'package:flametest/main.dart';
+import 'package:flametest/space_shooter_game.dart';
 
 class Player extends SpriteComponent with HasGameRef<SpaceShooterGame> {
 
@@ -17,14 +17,4 @@ class Player extends SpriteComponent with HasGameRef<SpaceShooterGame> {
   void move(Vector2 delta) {
     position.add(delta);
   }
-
-  // static final _paint = Paint()..color = Colors.white;
-
-  // @override
-  // void render(Canvas canvas) {
-  //   super.render(canvas);
-  //
-  //   canvas.drawRect(size.toRect(), _paint);
-  // }
-
 }
