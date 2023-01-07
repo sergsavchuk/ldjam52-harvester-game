@@ -2,7 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:flametest/player.dart';
+import 'package:flametest/harvester.dart';
 import 'package:flametest/wheat_tile.dart';
 import 'package:flutter/material.dart';
 

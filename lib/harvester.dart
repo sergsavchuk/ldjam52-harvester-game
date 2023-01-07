@@ -1,5 +1,5 @@
 import 'package:flame/components.dart';
-import 'package:flametest/my_game.dart';
+import 'package:flametest/harvester_game.dart';
 
 class Harvester extends SpriteComponent with HasGameRef<HarvesterGame> {
 
