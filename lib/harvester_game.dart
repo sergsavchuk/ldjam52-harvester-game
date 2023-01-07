@@ -25,7 +25,7 @@ final List<LogicalKeyboardKey> controls = [
 
 class HarvesterGame extends Forge2DGame
     with PanDetector, ScaleDetector, KeyboardEvents {
-  late Harvester player;
+  late Harvester harvester;
   late TextComponent scoreComponent;
 
   late final Set<LogicalKeyboardKey> pressedKeySet = {};
@@ -49,7 +49,8 @@ class HarvesterGame extends Forge2DGame
             position: Vector2((index % fieldSize).toDouble(),
                 (index ~/ fieldSize).toDouble()))));
 
-    add(Harvester());
+    await add(harvester = Harvester());
+    camera.followVector2(harvester.body.position);
 
     add(scoreComponent = TextComponent(
         textRenderer: TextPaint(

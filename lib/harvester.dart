@@ -6,17 +6,15 @@ import 'package:flametest/harvester_game.dart';
 import 'package:flutter/services.dart';
 
 class Harvester extends BodyComponent<HarvesterGame> {
-  final size = const Size(1, 2);
-  late final _renderPosition = -size.bottomRight(Offset.zero) / 2;
-  late final _renderRect = _renderPosition & size;
+  final _size = Vector2(1, 2);
 
-  late Sprite sprite;
+  late final SpriteComponent sprite;
 
   late final vertices = <Vector2>[
-    Vector2(-size.width / 2, -size.height / 2),
-    Vector2(size.width / 2, -size.height / 2),
-    Vector2(size.width / 2, size.height / 2),
-    Vector2(-size.width / 2, size.height / 2),
+    Vector2(-_size.x / 2, -_size.y / 2),
+    Vector2(_size.x / 2, -_size.y / 2),
+    Vector2(_size.x / 2, _size.y / 2),
+    Vector2(-_size.x / 2, _size.y / 2),
   ];
 
   final _maxForwardSpeed = 8.0;
@@ -31,7 +29,10 @@ class Harvester extends BodyComponent<HarvesterGame> {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    sprite = await gameRef.loadSprite('harvester_sprite.png');
+    add(sprite = SpriteComponent(
+        anchor: Anchor.center,
+        size: _size,
+        sprite: await gameRef.loadSprite('harvester_sprite.png')));
   }
 
   @override
@@ -118,7 +119,7 @@ class Harvester extends BodyComponent<HarvesterGame> {
 
   @override
   void render(Canvas canvas) {
-    sprite.renderRect(canvas, _renderRect, overridePaint: paint);
+    // keep it empty to not draw white rect of BodyComponent
   }
 
   // TODO maybe move it up ? or move to game class ?
