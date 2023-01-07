@@ -12,17 +12,17 @@ class Harvester extends BodyComponent<HarvesterGame> {
 
   late Sprite sprite;
 
-  final vertices = <Vector2>[
-    Vector2(-0.5, -1),
-    Vector2(0.5, -1),
-    Vector2(0.5, 1),
-    Vector2(-0.5, 1),
+  late final vertices = <Vector2>[
+    Vector2(-size.width / 2, -size.height / 2),
+    Vector2(size.width / 2, -size.height / 2),
+    Vector2(size.width / 2, size.height / 2),
+    Vector2(-size.width / 2, size.height / 2),
   ];
 
-  final _maxForwardSpeed = 4.0;
-  final _maxBackwardSpeed = -1.5;
-  final _maxDriveForce = 5.0;
-  final _torque = 1.5;
+  final _maxForwardSpeed = 8.0;
+  final _maxBackwardSpeed = -3.5;
+  final _maxDriveForce = 8.0;
+  final _torque = 3.0;
 
   late final _maxLateralImpulse = 7.5;
   final double _currentTraction = 1.0;
