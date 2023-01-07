@@ -4,9 +4,10 @@ import 'package:flame/components.dart';
 import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flametest/harvester.dart';
+import 'package:flametest/harvester_game.dart';
 import 'package:forge2d/src/dynamics/body.dart';
 
-class WheatTile extends BodyComponent with ContactCallbacks {
+class WheatTile extends BodyComponent<HarvesterGame> with ContactCallbacks {
   final _baseSize = Vector2(1.0, 1.0);
 
   bool collected = false;
@@ -46,6 +47,7 @@ class WheatTile extends BodyComponent with ContactCallbacks {
     if (collected) {
       world.destroyBody(body);
       gameRef.remove(this);
+      gameRef.increaseScore(1);
     }
   }
 

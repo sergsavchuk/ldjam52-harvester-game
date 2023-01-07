@@ -24,10 +24,13 @@ final List<LogicalKeyboardKey> controls = [
 ];
 
 class HarvesterGame extends Forge2DGame
-    with PanDetector, ScaleDetector, KeyboardEvents{
+    with PanDetector, ScaleDetector, KeyboardEvents {
   late Harvester player;
+  late TextComponent scoreComponent;
 
   late final Set<LogicalKeyboardKey> pressedKeySet = {};
+
+  int _currentScore = 0;
 
   HarvesterGame() : super(gravity: Vector2.zero(), zoom: zoom);
 
@@ -48,8 +51,15 @@ class HarvesterGame extends Forge2DGame
 
     add(Harvester());
 
+    add(scoreComponent = TextComponent(
+        textRenderer: TextPaint(
+            style: const TextStyle(fontSize: 50, color: Colors.white)),
+        anchor: Anchor.topRight,
+        position: Vector2(screenSize.x - 30, 30))
+      ..positionType = PositionType.viewport);
+    increaseScore(0);
+
     add(FpsTextComponent(
-      position: Vector2(0, 0),
       anchor: Anchor.topLeft,
     ));
   }
@@ -79,6 +89,11 @@ class HarvesterGame extends Forge2DGame
   @override
   Color backgroundColor() {
     return Colors.red; // TODO pick more suitable color
+  }
+
+  void increaseScore(int value) {
+    _currentScore += value;
+    scoreComponent.text = "Score: $_currentScore";
   }
 }
 
