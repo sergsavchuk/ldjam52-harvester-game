@@ -9,8 +9,8 @@ class Player extends SpriteComponent with HasGameRef<MyGame> {
 
     sprite = await gameRef.loadSprite('player-sprite.png');
     position = gameRef.size / 2;
-    width = 50;
-    height = 100;
+    width = 1;
+    height = 2;
     anchor = Anchor.center;
   }
 
