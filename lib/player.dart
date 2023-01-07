@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flametest/my_game.dart';
 
-class Player extends SpriteComponent with HasGameRef<MyGame> {
+class Harvester extends SpriteComponent with HasGameRef<HarvesterGame> {
 
   @override
   Future<void>? onLoad() async {

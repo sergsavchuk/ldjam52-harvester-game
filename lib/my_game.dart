@@ -15,10 +15,10 @@ final blackPaint = Paint()..color = Colors.black;
 
 const fieldSize = 20;
 
-class MyGame extends Forge2DGame with PanDetector, ScaleDetector {
-  late Player player;
+class HarvesterGame extends Forge2DGame with PanDetector, ScaleDetector {
+  late Harvester player;
 
-  MyGame() : super(zoom: zoom);
+  HarvesterGame() : super(zoom: zoom);
 
   @override
   Future<void> onLoad() async {
