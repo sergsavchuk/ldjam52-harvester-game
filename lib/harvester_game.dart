@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -24,13 +26,17 @@ final List<LogicalKeyboardKey> controls = [
 ];
 
 class HarvesterGame extends Forge2DGame
-    with PanDetector, ScaleDetector, KeyboardEvents {
+    with PanDetector, ScrollDetector, KeyboardEvents {
   late Harvester harvester;
   late TextComponent scoreComponent;
 
   late final Set<LogicalKeyboardKey> pressedKeySet = {};
 
   int _currentScore = 0;
+
+  final double _minCameraZoom = 20;
+  final double _maxCameraZoom = 100;
+  final double _cameraGlobalScrollModifier = 100;
 
   HarvesterGame() : super(gravity: Vector2.zero(), zoom: zoom);
 
@@ -82,9 +88,13 @@ class HarvesterGame extends Forge2DGame
   }
 
   @override
-  void onScaleUpdate(ScaleUpdateInfo info) {
-    // TODO: implement onScaleUpdate
-    super.onScaleUpdate(info);
+  void onScroll(PointerScrollInfo info) {
+    super.onScroll(info);
+
+    final zoomDelta = info.scrollDelta.global.y / _cameraGlobalScrollModifier;
+
+    camera.zoom =
+        max(min(camera.zoom - zoomDelta, _maxCameraZoom), _minCameraZoom);
   }
 
   @override
