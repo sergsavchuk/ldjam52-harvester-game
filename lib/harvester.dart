@@ -1,20 +1,139 @@
-import 'package:flame/components.dart';
-import 'package:flametest/harvester_game.dart';
+import 'dart:ui';
 
-class Harvester extends SpriteComponent with HasGameRef<HarvesterGame> {
+import 'package:flame/components.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flametest/harvester_game.dart';
+import 'package:flutter/services.dart';
+
+class Harvester extends BodyComponent<HarvesterGame> {
+  final size = const Size(1, 2);
+  late final _renderPosition = -size.bottomRight(Offset.zero) / 2;
+  late final _renderRect = _renderPosition & size;
+
+  late Sprite sprite;
+
+  final vertices = <Vector2>[
+    Vector2(-0.5, -1),
+    Vector2(0.5, -1),
+    Vector2(0.5, 1),
+    Vector2(-0.5, 1),
+  ];
+
+  final _maxForwardSpeed = 4.0;
+  final _maxBackwardSpeed = -1.5;
+  final _maxDriveForce = 5.0;
+  final _torque = 1.5;
+
+  late final _maxLateralImpulse = 7.5;
+  final double _currentTraction = 1.0;
 
   @override
-  Future<void>? onLoad() async {
+  Future<void> onLoad() async {
     await super.onLoad();
 
-    sprite = await gameRef.loadSprite('player-sprite.png');
-    position = gameRef.size / 2;
-    width = 1;
-    height = 2;
-    anchor = Anchor.center;
+    sprite = await gameRef.loadSprite('harvester_sprite.png');
   }
 
-  void move(Vector2 delta) {
-    position.add(delta);
+  @override
+  Body createBody() {
+    final def = BodyDef()
+      ..type = BodyType.dynamic
+      ..position = gameRef.size / 2;
+    final body = world.createBody(def)
+      ..userData = this
+      ..angularDamping = 3.0;
+
+    final shape = PolygonShape()..set(vertices);
+    final fixtureDef = FixtureDef(shape)
+      ..density = 0.2
+      ..restitution = 2.0;
+
+    body.createFixture(fixtureDef);
+
+    return body;
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    if (!body.isAwake && gameRef.pressedKeySet.isEmpty) {
+      return;
+    }
+
+    _updateTurn(dt);
+    _updateFriction();
+
+    var desiredSpeed = 0.0;
+    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyW)) {
+      desiredSpeed = _maxForwardSpeed;
+    }
+    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyS)) {
+      desiredSpeed += _maxBackwardSpeed;
+    }
+
+    final currentForwardNormal = body.worldVector(Vector2(0.0, -1.0));
+    final currentSpeed = _forwardVelocity.dot(currentForwardNormal);
+    var force = 0.0;
+    if (desiredSpeed < currentSpeed) {
+      force = -_maxDriveForce;
+    } else if (desiredSpeed > currentSpeed) {
+      force = _maxDriveForce;
+    }
+
+    if (force.abs() > 0) {
+      body.applyForce(currentForwardNormal..scale(_currentTraction * force));
+    }
+  }
+
+  void _updateTurn(double dt) {
+    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyA)) {
+      body.applyTorque(-_torque);
+    }
+
+    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyD)) {
+      body.applyTorque(_torque);
+    }
+  }
+
+  void _updateFriction() {
+    final impulse = _lateralVelocity
+      ..scale(-body.mass)
+      ..clampScalar(-_maxLateralImpulse, _maxLateralImpulse)
+      ..scale(_currentTraction);
+
+    body.applyLinearImpulse(impulse);
+    body.applyAngularImpulse(
+      0.1 * _currentTraction * body.getInertia() * -body.angularVelocity,
+    );
+
+    final currentForwardNormal = _forwardVelocity;
+    final currentForwardSpeed = currentForwardNormal.length;
+    currentForwardNormal.normalize();
+
+    final dragForceMagnitute = -2 * currentForwardSpeed;
+    body.applyForce(
+        currentForwardNormal..scale(_currentTraction * dragForceMagnitute));
+  }
+
+  @override
+  void render(Canvas canvas) {
+    sprite.renderRect(canvas, _renderRect, overridePaint: paint);
+  }
+
+  // TODO maybe move it up ? or move to game class ?
+  final Vector2 _worldLeft = Vector2(-1.0, 0);
+  final Vector2 _worldUp = Vector2(0, -1.0);
+
+  Vector2 get _lateralVelocity {
+    final currentRightNormal = body.worldVector(_worldLeft);
+    return currentRightNormal
+      ..scale(currentRightNormal.dot(body.linearVelocity));
+  }
+
+  Vector2 get _forwardVelocity {
+    final currentForwardNormal = body.worldVector(_worldUp);
+    return currentForwardNormal
+      ..scale(currentForwardNormal.dot(body.linearVelocity));
   }
 }

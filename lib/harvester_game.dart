@@ -5,6 +5,7 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flametest/harvester.dart';
 import 'package:flametest/wheat_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 const zoom = 100.0;
 
@@ -15,10 +16,20 @@ final blackPaint = Paint()..color = Colors.black;
 
 const fieldSize = 20;
 
-class HarvesterGame extends Forge2DGame with PanDetector, ScaleDetector {
+final List<LogicalKeyboardKey> controls = [
+  LogicalKeyboardKey.keyW,
+  LogicalKeyboardKey.keyA,
+  LogicalKeyboardKey.keyD,
+  LogicalKeyboardKey.keyS,
+];
+
+class HarvesterGame extends Forge2DGame
+    with PanDetector, ScaleDetector, KeyboardEvents {
   late Harvester player;
 
-  HarvesterGame() : super(zoom: zoom);
+  late final Set<LogicalKeyboardKey> pressedKeySet = {};
+
+  HarvesterGame() : super(gravity: Vector2.zero(), zoom: zoom);
 
   @override
   Future<void> onLoad() async {
@@ -28,13 +39,30 @@ class HarvesterGame extends Forge2DGame with PanDetector, ScaleDetector {
 
     add(_Background(size: screenSize)..positionType = PositionType.viewport);
 
-    // add(player = Player());
-
     addAll(List.generate(
         fieldSize * fieldSize,
-        (index) => WheatTile( // TODO consider tile size int calculation
+        (index) => WheatTile(
+            // TODO consider tile size in calculation
             position: Vector2((index % fieldSize).toDouble(),
                 (index ~/ fieldSize).toDouble()))));
+
+    add(Harvester());
+  }
+
+  @override
+  KeyEventResult onKeyEvent(
+      RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    super.onKeyEvent(event, keysPressed);
+
+    pressedKeySet.clear();
+
+    for (var key in keysPressed) {
+      if (controls.contains(key)) {
+        pressedKeySet.add(key);
+      }
+    }
+
+    return KeyEventResult.handled;
   }
 
   @override
