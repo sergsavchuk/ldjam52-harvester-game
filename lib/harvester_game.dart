@@ -5,7 +5,7 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flametest/harvester.dart';
-import 'package:flametest/map_component.dart';
+import 'package:flametest/wheat_field.dart';
 import 'package:flametest/map_object.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

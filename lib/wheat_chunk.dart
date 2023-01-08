@@ -4,14 +4,14 @@ import 'package:flame/components.dart';
 import 'package:flametest/harvester_game.dart';
 import 'package:flametest/map_object.dart';
 
-class Chunk {
+class WheatChunk {
   static final _paint = Paint();
 
   final int size;
   final Vector2 position;
   final List<List<MapObject?>> mapObjects;
 
-  Chunk(
+  WheatChunk(
       {required this.size,
       required this.position,
       MapObjectCreator? initialObjectCreator})

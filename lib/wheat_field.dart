@@ -1,8 +1,9 @@
+import 'dart:math';
 import 'dart:ui';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flametest/chunk.dart';
+import 'package:flametest/boulder.dart';
+import 'package:flametest/wheat_chunk.dart';
 import 'package:flametest/harvester_game.dart';
 import 'package:flametest/map_object.dart';
 
@@ -13,7 +14,10 @@ class WheatField extends Component with HasGameRef<HarvesterGame> {
   Vector2? renderCenter;
   MapObjectCreator? initialObjectCreator;
 
-  final Map<Vector2, Chunk> chunksMap = {};
+  final Map<Vector2, WheatChunk> chunksMap = {};
+
+  late final _boulderPositionList =
+      List.generate(chunkSize * chunkSize, (index) => index);
 
   WheatField(
       {required this.renderDistance,
@@ -39,12 +43,14 @@ class WheatField extends Component with HasGameRef<HarvesterGame> {
       for (int j = currentChunkY - renderDistance;
           j < currentChunkY + renderDistance;
           j++) {
-        final chunksPos = Vector2(i.toDouble(), j.toDouble());
-        if (!chunksMap.containsKey(chunksPos)) {
-          chunksMap[chunksPos] = Chunk(
+        final chunkPos = Vector2(i.toDouble(), j.toDouble());
+        if (!chunksMap.containsKey(chunkPos)) {
+          chunksMap[chunkPos] = WheatChunk(
               size: chunkSize,
-              position: chunksPos,
+              position: chunkPos,
               initialObjectCreator: initialObjectCreator);
+
+          _spawnBoulders(chunksMap[chunkPos]!);
         }
       }
     }
@@ -80,6 +86,19 @@ class WheatField extends Component with HasGameRef<HarvesterGame> {
           chunk.position.y <= currentChunkY + renderDistance) {
         chunk.render(canvas);
       }
+    }
+  }
+
+  void _spawnBoulders(WheatChunk chunk) {
+    // TODO remove boulders when chunk is not rendered
+    //  (and save there position in chunk data)
+    _boulderPositionList.shuffle();
+    final bouldersCount = max(chunk.position.x.abs(), chunk.position.y.abs());
+    for (int i = 0; i < bouldersCount; i++) {
+      add(Boulder(
+          position: chunk.position * chunkSize.toDouble() +
+              Vector2((_boulderPositionList[i] % chunkSize).toDouble(),
+                  (_boulderPositionList[i] ~/ chunkSize).toDouble())));
     }
   }
 }

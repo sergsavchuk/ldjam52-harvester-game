@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flametest/harvester_game.dart';
@@ -50,7 +49,7 @@ class Harvester extends BodyComponent<HarvesterGame> {
     final shape = PolygonShape()..set(vertices);
     final fixtureDef = FixtureDef(shape)
       ..density = 0.2
-      ..restitution = 2.0;
+      ..restitution = 0.1;
 
     body.createFixture(fixtureDef);
 
