@@ -3,8 +3,11 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame_audio/audio_pool.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flametest/harvester.dart';
+import 'package:flametest/hay.dart';
 import 'package:flametest/wheat_field.dart';
 import 'package:flametest/map_object.dart';
 import 'package:flutter/material.dart';
@@ -32,12 +35,18 @@ class HarvesterGame extends Forge2DGame
   late final Set<LogicalKeyboardKey> pressedKeySet = {};
 
   int _currentScore = 0;
+  int _pointsToSpawHay = 5;
 
   final double _minCameraZoom = 50;
   final double _maxCameraZoom = 100;
 
   // TODO different scroll modifier for different platforms
   final double _cameraGlobalScrollModifier = 10;
+
+  late final Sprite wheatSprite;
+  late final Sprite haySprite;
+
+  late final AudioPool _popSoundPool;
 
   HarvesterGame() : super(gravity: Vector2.zero(), zoom: zoom);
 
@@ -49,7 +58,11 @@ class HarvesterGame extends Forge2DGame
 
     add(_Background(size: screenSize)..positionType = PositionType.viewport);
 
-    final wheatSprite = await loadSprite('cute_wheat.png');
+    wheatSprite = await loadSprite('cute_wheat.png');
+    haySprite = await loadSprite('hay.png');
+
+    _popSoundPool = await FlameAudio.createPool('sounds/pop.mp3',
+        minPlayers: 1, maxPlayers: 4);
 
     final mapComponent = WheatField(
         renderDistance: 2,
@@ -58,7 +71,7 @@ class HarvesterGame extends Forge2DGame
             MapObject(image: wheatSprite.image, size: Vector2(1.0, 1.16)));
     add(mapComponent);
 
-    await add(harvester = Harvester());
+    await add(harvester = Harvester()..priority = 1000);
     camera.followVector2(harvester.body.position);
     mapComponent.renderCenter = harvester.body.position;
 
@@ -109,6 +122,15 @@ class HarvesterGame extends Forge2DGame
   void increaseScore(int value) {
     _currentScore += value;
     scoreComponent.text = "Score: $_currentScore";
+
+    if (_currentScore > 0 && _currentScore % _pointsToSpawHay == 0) {
+      _spawnHay();
+    }
+  }
+
+  void _spawnHay() {
+    add(Hay(sprite: haySprite, position: harvester.body.position));
+    _popSoundPool.start(volume: Random().nextDouble() / 2 + 0.5);
   }
 }
 

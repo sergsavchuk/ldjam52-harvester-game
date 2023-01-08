@@ -17,11 +17,12 @@ class Harvester extends BodyComponent<HarvesterGame> {
     Vector2(-_size.x / 2, _size.y / 2),
   ];
 
-  static const speedMultiplier = 3;
+  static const speedMultiplier = 1;
 
   final _maxForwardSpeed = 8.0 * speedMultiplier;
   final _maxBackwardSpeed = -3.5 * speedMultiplier;
   final _maxDriveForce = 8.0 * speedMultiplier;
+
   final _torque = 3.0;
 
   late final _maxLateralImpulse = 7.5;
@@ -67,21 +68,16 @@ class Harvester extends BodyComponent<HarvesterGame> {
     _updateTurn(dt);
     _updateFriction();
 
-    var desiredSpeed = 0.0;
-    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyW)) {
-      desiredSpeed = _maxForwardSpeed;
-    }
-    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyS)) {
-      desiredSpeed += _maxBackwardSpeed;
-    }
-
     final currentForwardNormal = body.worldVector(Vector2(0.0, -1.0));
     final currentSpeed = _forwardVelocity.dot(currentForwardNormal);
     var force = 0.0;
-    if (desiredSpeed < currentSpeed) {
-      force = -_maxDriveForce;
-    } else if (desiredSpeed > currentSpeed) {
+    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyW) &&
+        currentSpeed < _maxForwardSpeed) {
       force = _maxDriveForce;
+    }
+    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyS) &&
+        currentSpeed > _maxBackwardSpeed) {
+      force = -_maxDriveForce;
     }
 
     if (force.abs() > 0) {
