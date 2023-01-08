@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flametest/harvester_game.dart';
@@ -17,9 +18,11 @@ class Harvester extends BodyComponent<HarvesterGame> {
     Vector2(-_size.x / 2, _size.y / 2),
   ];
 
-  final _maxForwardSpeed = 8.0;
-  final _maxBackwardSpeed = -3.5;
-  final _maxDriveForce = 8.0;
+  static const speedMultiplier = 3;
+
+  final _maxForwardSpeed = 8.0 * speedMultiplier;
+  final _maxBackwardSpeed = -3.5 * speedMultiplier;
+  final _maxDriveForce = 8.0 * speedMultiplier;
   final _torque = 3.0;
 
   late final _maxLateralImpulse = 7.5;

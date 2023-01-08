@@ -5,7 +5,8 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flametest/harvester.dart';
-import 'package:flametest/wheat_tile.dart';
+import 'package:flametest/map_component.dart';
+import 'package:flametest/map_object.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -15,8 +16,6 @@ final screenSize = Vector2(1920, 1080);
 final worldSize = screenSize / zoom;
 
 final blackPaint = Paint()..color = Colors.black;
-
-const fieldSize = 20;
 
 final List<LogicalKeyboardKey> controls = [
   LogicalKeyboardKey.keyW,
@@ -34,9 +33,11 @@ class HarvesterGame extends Forge2DGame
 
   int _currentScore = 0;
 
-  final double _minCameraZoom = 20;
+  final double _minCameraZoom = 50;
   final double _maxCameraZoom = 100;
-  final double _cameraGlobalScrollModifier = 100;
+
+  // TODO different scroll modifier for different platforms
+  final double _cameraGlobalScrollModifier = 10;
 
   HarvesterGame() : super(gravity: Vector2.zero(), zoom: zoom);
 
@@ -48,15 +49,18 @@ class HarvesterGame extends Forge2DGame
 
     add(_Background(size: screenSize)..positionType = PositionType.viewport);
 
-    addAll(List.generate(
-        fieldSize * fieldSize,
-        (index) => WheatTile(
-            // TODO consider tile size in calculation
-            position: Vector2((index % fieldSize).toDouble(),
-                (index ~/ fieldSize).toDouble()))));
+    final wheatSprite = await loadSprite('cute_wheat.png');
+
+    final mapComponent = WheatField(
+        renderDistance: 2,
+        chunkSize: 20,
+        initialObjectCreator: () =>
+            MapObject(image: wheatSprite.image, size: Vector2(1.0, 1.16)));
+    add(mapComponent);
 
     await add(harvester = Harvester());
     camera.followVector2(harvester.body.position);
+    mapComponent.renderCenter = harvester.body.position;
 
     add(scoreComponent = TextComponent(
         textRenderer: TextPaint(
