@@ -6,7 +6,7 @@ import 'package:another_harvester_game/harvester_game.dart';
 import 'package:flutter/services.dart';
 
 class Harvester extends BodyComponent<HarvesterGame> {
-  final _size = Vector2(1, 1.52);
+  final _size = Vector2(1, 1.556);
 
   late final SpriteComponent sprite;
 
@@ -36,7 +36,7 @@ class Harvester extends BodyComponent<HarvesterGame> {
     add(sprite = SpriteComponent(
         anchor: Anchor.center,
         size: _size,
-        sprite: await gameRef.loadSprite('harvester_sprite.png')));
+        sprite: await gameRef.loadSprite('harvester_new.png')));
   }
 
   @override
