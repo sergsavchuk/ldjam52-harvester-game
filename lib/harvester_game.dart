@@ -122,7 +122,7 @@ class HarvesterGame extends Forge2DGame
 
     _controlsComponent = TextComponent(
         text:
-            "WASD to move\n Mouse wheel to zoom in/out\n Space to hide/show this message",
+            "WASD/arrow keys to move\n Mouse wheel to zoom in/out\n Space to hide/show this message",
         textRenderer: TextPaint(
             style: GoogleFonts.rubikBubbles(fontSize: 60, color: Colors.white)),
         anchor: Anchor.center,
