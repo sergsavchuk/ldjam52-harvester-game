@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flametest/harvester_game.dart';
-import 'package:flametest/map_object.dart';
+import 'package:another_harvester_game/harvester_game.dart';
+import 'package:another_harvester_game/map_object.dart';
 
 class WheatChunk {
   static final _paint = Paint();

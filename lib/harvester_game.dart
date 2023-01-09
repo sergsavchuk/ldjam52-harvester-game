@@ -6,10 +6,10 @@ import 'package:flame/game.dart';
 import 'package:flame_audio/audio_pool.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:flametest/harvester.dart';
-import 'package:flametest/hay.dart';
-import 'package:flametest/wheat_field.dart';
-import 'package:flametest/map_object.dart';
+import 'package:another_harvester_game/harvester.dart';
+import 'package:another_harvester_game/hay.dart';
+import 'package:another_harvester_game/wheat_field.dart';
+import 'package:another_harvester_game/map_object.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -130,7 +130,7 @@ class HarvesterGame extends Forge2DGame
 
   void _spawnHay() {
     add(Hay(sprite: haySprite, position: harvester.body.position));
-    _popSoundPool.start(volume: Random().nextDouble() / 2 + 0.5);
+    _popSoundPool.start();
   }
 }
 

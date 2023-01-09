@@ -2,10 +2,10 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flametest/boulder.dart';
-import 'package:flametest/wheat_chunk.dart';
-import 'package:flametest/harvester_game.dart';
-import 'package:flametest/map_object.dart';
+import 'package:another_harvester_game/boulder.dart';
+import 'package:another_harvester_game/wheat_chunk.dart';
+import 'package:another_harvester_game/harvester_game.dart';
+import 'package:another_harvester_game/map_object.dart';
 
 class WheatField extends Component with HasGameRef<HarvesterGame> {
   final int renderDistance;
