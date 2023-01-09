@@ -12,6 +12,7 @@ import 'package:another_harvester_game/wheat_field.dart';
 import 'package:another_harvester_game/map_object.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const zoom = 100.0;
 
@@ -30,7 +31,9 @@ final List<LogicalKeyboardKey> controls = [
 class HarvesterGame extends Forge2DGame
     with PanDetector, ScrollDetector, KeyboardEvents {
   late Harvester harvester;
-  late TextComponent scoreComponent;
+  late WheatField wheatField;
+  late final TextComponent _scoreComponent;
+  late final TextComponent _timeComponent;
 
   late final Set<LogicalKeyboardKey> pressedKeySet = {};
 
@@ -50,7 +53,10 @@ class HarvesterGame extends Forge2DGame
   bool started = false;
   bool running = false;
 
-  int _currentScore = 0;
+  double _levelTime = 30;
+  double _timePassed = 0;
+
+  int score = 0;
   int highScore = 0;
   int money = 0;
 
@@ -62,42 +68,46 @@ class HarvesterGame extends Forge2DGame
 
     camera.viewport = FixedResolutionViewport(screenSize);
 
-    add(_Background(size: screenSize)..positionType = PositionType.viewport);
-
     wheatSprite = await loadSprite('cute_wheat.png');
     haySprite = await loadSprite('hay.png');
 
     _popSoundPool = await FlameAudio.createPool('sounds/pop.mp3',
         minPlayers: 1, maxPlayers: 4);
 
-    final mapComponent = WheatField(
-        renderDistance: 2,
-        chunkSize: 20,
-        initialObjectCreator: () =>
-            MapObject(image: wheatSprite.image, size: Vector2(1.0, 1.16)));
-    add(mapComponent);
+    add(_Background(size: screenSize)..positionType = PositionType.viewport);
 
-    await add(harvester = Harvester()..priority = 1000);
-    camera.followVector2(harvester.body.position);
-    mapComponent.renderCenter = harvester.body.position;
-
-    add(scoreComponent = TextComponent(
+    add(_scoreComponent = TextComponent(
         textRenderer: TextPaint(
-            style: const TextStyle(fontSize: 50, color: Colors.white)),
+            style: GoogleFonts.rubikBubbles(fontSize: 60, color: Colors.white)),
         anchor: Anchor.topRight,
         position: Vector2(screenSize.x - 30, 30))
-      ..positionType = PositionType.viewport);
+      ..positionType = PositionType.viewport
+      ..priority = double.maxFinite.toInt());
     increaseScore(0);
 
+    add(_timeComponent = TextComponent(
+        textRenderer: TextPaint(
+            style: GoogleFonts.rubikBubbles(fontSize: 60, color: Colors.white)),
+        anchor: Anchor.topLeft,
+        position: Vector2(30, 30))
+      ..positionType = PositionType.viewport
+      ..priority = double.maxFinite.toInt());
+
     add(FpsTextComponent(
-      anchor: Anchor.topLeft,
+      position: Vector2(0, screenSize.y),
+      anchor: Anchor.bottomLeft,
     ));
+
+    await spawn();
   }
 
-  void start() {
+  void start() async {
+    _timePassed = 0;
+    score = 0;
+    overlays.clear();
+
     started = true;
     running = true;
-    overlays.clear();
   }
 
   void pause() {
@@ -109,6 +119,39 @@ class HarvesterGame extends Forge2DGame
     } else {
       start();
     }
+  }
+
+  void gameover() {
+    pressedKeySet.clear();
+
+    running = false;
+    started = false;
+    highScore = max(score, highScore);
+    money += score ~/ _pointsToSpawHay;
+
+    despawn();
+    spawn();
+
+    overlays.add('gameover');
+  }
+
+  Future<void> spawn() async {
+    wheatField = WheatField(
+        renderDistance: 2,
+        chunkSize: 20,
+        initialObjectCreator: () =>
+            MapObject(image: wheatSprite.image, size: Vector2(1.0, 1.16)));
+    add(wheatField);
+
+    await add(harvester = Harvester()..priority = 1000);
+    camera.followVector2(harvester.body.position);
+    wheatField.renderCenter = harvester.body.position;
+  }
+
+  void despawn() {
+    remove(wheatField);
+    remove(harvester);
+    removeWhere((component) => component is Hay);
   }
 
   @override
@@ -146,15 +189,35 @@ class HarvesterGame extends Forge2DGame
   }
 
   @override
+  void update(double dt) {
+    super.update(dt);
+    if (!running) {
+      return;
+    }
+
+    _timePassed += dt;
+
+    _timeComponent.text = "Time: ${max((_levelTime - _timePassed).floor(), 0)}";
+
+    if (_timePassed >= _levelTime) {
+      gameover();
+    }
+  }
+
+  @override
   Color backgroundColor() {
-    return Colors.limeAccent.shade100; // TODO pick more suitable color
+    return Colors.black; // TODO pick more suitable color
   }
 
   void increaseScore(int value) {
-    _currentScore += value;
-    scoreComponent.text = "Score: $_currentScore";
+    if (!started) {
+      return;
+    }
 
-    if (_currentScore > 0 && _currentScore % _pointsToSpawHay == 0) {
+    score += value;
+    _scoreComponent.text = "Score: $score";
+
+    if (score > 0 && score % _pointsToSpawHay == 0) {
       _spawnHay();
     }
   }

@@ -47,13 +47,13 @@ class HarvesterMenuState extends State<HarvesterMenu> {
                   const Padding(padding: EdgeInsets.only(top: 10)),
                   TextButton(
                       onPressed: () => widget.game.start(),
-                      child: Text(
-                          widget.game.started ? "Continue" : "Start Game",
+                      child: Text(widget.game.started ? "Continue" : "Play",
                           style: GoogleFonts.rubikBubbles(fontSize: 18))),
                   TextButton(
                       onPressed: () => exit(0),
                       child: Text("Exit",
                           style: GoogleFonts.rubikBubbles(fontSize: 18))),
+                  const Padding(padding: EdgeInsets.only(top: 10)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -62,6 +62,9 @@ class HarvesterMenuState extends State<HarvesterMenu> {
                       _upgradeButton("Torque", () => 1, () => widget.game.money,
                           Image.asset('assets/icon/torque.png')),
                     ],
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10),
                   ),
                   Visibility(
                       visible: upgradeInfoVisible,
@@ -94,7 +97,7 @@ class HarvesterMenuState extends State<HarvesterMenu> {
             ],
           ),
           child: IconButton(
-            iconSize: 80,
+            iconSize: 70,
             onPressed: null,
             icon: icon,
           )),
