@@ -34,8 +34,7 @@ class HarvesterGame extends Forge2DGame
 
   late final Set<LogicalKeyboardKey> pressedKeySet = {};
 
-  int _currentScore = 0;
-  int _pointsToSpawHay = 5;
+  final int _pointsToSpawHay = 5;
 
   final double _minCameraZoom = 50;
   final double _maxCameraZoom = 100;
@@ -47,6 +46,13 @@ class HarvesterGame extends Forge2DGame
   late final Sprite haySprite;
 
   late final AudioPool _popSoundPool;
+
+  bool started = false;
+  bool running = false;
+
+  int _currentScore = 0;
+  int highScore = 0;
+  int money = 0;
 
   HarvesterGame() : super(gravity: Vector2.zero(), zoom: zoom);
 
@@ -88,10 +94,35 @@ class HarvesterGame extends Forge2DGame
     ));
   }
 
+  void start() {
+    started = true;
+    running = true;
+    overlays.clear();
+  }
+
+  void pause() {
+    if (running) {
+      pressedKeySet.clear();
+
+      running = false;
+      overlays.add('menu');
+    } else {
+      start();
+    }
+  }
+
   @override
   KeyEventResult onKeyEvent(
       RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     super.onKeyEvent(event, keysPressed);
+
+    if (keysPressed.contains(LogicalKeyboardKey.escape) && started) {
+      pause();
+    }
+
+    if (!running) {
+      return KeyEventResult.ignored;
+    }
 
     pressedKeySet.clear();
 
@@ -116,7 +147,7 @@ class HarvesterGame extends Forge2DGame
 
   @override
   Color backgroundColor() {
-    return Colors.red; // TODO pick more suitable color
+    return Colors.limeAccent.shade100; // TODO pick more suitable color
   }
 
   void increaseScore(int value) {
