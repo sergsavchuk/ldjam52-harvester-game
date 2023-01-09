@@ -73,8 +73,6 @@ class HarvesterGame extends Forge2DGame
     wheatSprite = await loadSprite('cute_wheat.png');
     haySprite = await loadSprite('hay.png');
 
-    _popSoundPool = await FlameAudio.createPool('sounds/pop.mp3',
-        minPlayers: 1, maxPlayers: 4);
     _sharedPrefs = await SharedPreferences.getInstance();
 
     money = _sharedPrefs.getInt('money') ?? 0;
@@ -105,6 +103,10 @@ class HarvesterGame extends Forge2DGame
     ));
 
     await spawn();
+
+    _popSoundPool = await FlameAudio.createPool('sounds/pop2.flac',
+        minPlayers: 1, maxPlayers: 4);
+    await FlameAudio.bgm.play('sounds/country-loop.wav');
   }
 
   void start() async {
@@ -234,6 +236,13 @@ class HarvesterGame extends Forge2DGame
   void _spawnHay() {
     add(Hay(sprite: haySprite, position: harvester.body.position));
     _popSoundPool.start();
+  }
+
+  @override
+  void onRemove() {
+    super.onRemove();
+
+    FlameAudio.bgm.dispose();
   }
 }
 

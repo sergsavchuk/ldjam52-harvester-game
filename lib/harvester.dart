@@ -17,7 +17,7 @@ class Harvester extends BodyComponent<HarvesterGame> {
     Vector2(-_size.x / 2, _size.y / 2),
   ];
 
-  static const speedMultiplier = 1;
+  static const speedMultiplier = 5;
 
   final _maxForwardSpeed = 8.0 * speedMultiplier;
   final _maxBackwardSpeed = -3.5 * speedMultiplier;

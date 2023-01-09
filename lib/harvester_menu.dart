@@ -40,7 +40,7 @@ class HarvesterMenuState extends State<HarvesterMenu> {
                   Text('Another harvester game',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.rubikBubbles(
-                          fontSize: 36,
+                          fontSize: 32,
                           color: Colors.black,
                           fontStyle: FontStyle.normal,
                           decoration: TextDecoration.none)),
@@ -48,11 +48,11 @@ class HarvesterMenuState extends State<HarvesterMenu> {
                   TextButton(
                       onPressed: () => widget.game.start(),
                       child: Text(widget.game.started ? "Continue" : "Play",
-                          style: GoogleFonts.rubikBubbles(fontSize: 18))),
+                          style: GoogleFonts.rubikBubbles(fontSize: 24))),
                   TextButton(
                       onPressed: () => exit(0),
                       child: Text("Exit",
-                          style: GoogleFonts.rubikBubbles(fontSize: 18))),
+                          style: GoogleFonts.rubikBubbles(fontSize: 24))),
                   const Padding(padding: EdgeInsets.only(top: 10)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -68,7 +68,7 @@ class HarvesterMenuState extends State<HarvesterMenu> {
                   ),
                   Visibility(
                       visible: upgradeInfoVisible,
-                      child: Text(upgradeInfoText,
+                      child: Text(upgradeInfoText, textAlign: TextAlign.center,
                           style: GoogleFonts.rubikBubbles())),
                   Expanded(
                       child: Container(
