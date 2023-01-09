@@ -1,11 +1,11 @@
 {
-    "name": "flametest",
-    "short_name": "flametest",
+    "name": "AnotherHarvesterGame",
+    "short_name": "AHG",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Flutter project to test Flame game framework for flutter, particularly on web and desktop platforms",
+    "description": "LDJAM52 game about harvesting",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
