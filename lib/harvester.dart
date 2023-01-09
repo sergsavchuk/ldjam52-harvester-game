@@ -17,13 +17,13 @@ class Harvester extends BodyComponent<HarvesterGame> {
     Vector2(-_size.x / 2, _size.y / 2),
   ];
 
-  static const speedMultiplier = 5;
+  static const speedMultiplier = 1;
 
   final _maxForwardSpeed = 8.0 * speedMultiplier;
   final _maxBackwardSpeed = -3.5 * speedMultiplier;
   final _maxDriveForce = 8.0 * speedMultiplier;
 
-  final _torque = 3.0;
+  final _torque = 1.0;
 
   late final _maxLateralImpulse = 7.5;
   final double _currentTraction = 1.0;
@@ -72,12 +72,12 @@ class Harvester extends BodyComponent<HarvesterGame> {
     final currentSpeed = _forwardVelocity.dot(currentForwardNormal);
     var force = 0.0;
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyW) &&
-        currentSpeed < _maxForwardSpeed) {
-      force = _maxDriveForce;
+        currentSpeed < _maxForwardSpeed * (gameRef.speedUpgrades + 1)) {
+      force = _maxDriveForce * (gameRef.speedUpgrades + 1);
     }
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyS) &&
-        currentSpeed > _maxBackwardSpeed) {
-      force = -_maxDriveForce;
+        currentSpeed > _maxBackwardSpeed * (gameRef.speedUpgrades + 1)) {
+      force = -_maxDriveForce * (gameRef.speedUpgrades + 1);
     }
 
     if (force.abs() > 0) {
@@ -87,11 +87,11 @@ class Harvester extends BodyComponent<HarvesterGame> {
 
   void _updateTurn(double dt) {
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyA)) {
-      body.applyTorque(-_torque);
+      body.applyTorque(-_torque - gameRef.torqueUpgrades);
     }
 
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyD)) {
-      body.applyTorque(_torque);
+      body.applyTorque(_torque + gameRef.torqueUpgrades);
     }
   }
 

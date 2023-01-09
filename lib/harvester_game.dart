@@ -50,7 +50,7 @@ class HarvesterGame extends Forge2DGame
   late final Sprite haySprite;
 
   late final AudioPool _popSoundPool;
-  late final SharedPreferences _sharedPrefs;
+  late final SharedPreferences sharedPrefs;
 
   bool started = false;
   bool running = false;
@@ -61,6 +61,8 @@ class HarvesterGame extends Forge2DGame
   int score = 0;
   int highScore = 0;
   int money = 0;
+  int speedUpgrades = 0;
+  int torqueUpgrades = 0;
 
   HarvesterGame() : super(gravity: Vector2.zero(), zoom: zoom);
 
@@ -73,10 +75,12 @@ class HarvesterGame extends Forge2DGame
     wheatSprite = await loadSprite('cute_wheat.png');
     haySprite = await loadSprite('hay.png');
 
-    _sharedPrefs = await SharedPreferences.getInstance();
+    sharedPrefs = await SharedPreferences.getInstance();
 
-    money = _sharedPrefs.getInt('money') ?? 0;
-    highScore = _sharedPrefs.getInt('highScore') ?? 0;
+    money = sharedPrefs.getInt('money') ?? 0;
+    highScore = sharedPrefs.getInt('highScore') ?? 0;
+    speedUpgrades = sharedPrefs.getInt('speedUpgrades') ?? 0;
+    torqueUpgrades = sharedPrefs.getInt('torqueUpgrades') ?? 0;
 
     add(_Background(size: screenSize)..positionType = PositionType.viewport);
 
@@ -137,8 +141,8 @@ class HarvesterGame extends Forge2DGame
     highScore = max(score, highScore);
     money += score ~/ _pointsToSpawHay;
 
-    _sharedPrefs.setInt('money', money);
-    _sharedPrefs.setInt('highScore', highScore);
+    sharedPrefs.setInt('money', money);
+    sharedPrefs.setInt('highScore', highScore);
 
     despawn();
     spawn();
@@ -163,6 +167,44 @@ class HarvesterGame extends Forge2DGame
     remove(wheatField);
     remove(harvester);
     removeWhere((component) => component is Hay);
+  }
+
+  int speedUpgradeCost() {
+    return pow(3, 3 + speedUpgrades).toInt();
+  }
+
+  int torqueUpgradeCost() {
+    return pow(3, 3 + torqueUpgrades).toInt();
+  }
+
+  void buySpeedUpgrade() {
+    if (money >= speedUpgradeCost()) {
+      money -= speedUpgradeCost();
+      speedUpgrades += 1;
+      sharedPrefs.setInt('money', money);
+      sharedPrefs.setInt('speedUpgrades', speedUpgrades);
+    }
+  }
+
+  void buyTorqueUpgrade() {
+    if (money >= torqueUpgradeCost()) {
+      money -= torqueUpgradeCost();
+      torqueUpgrades += 1;
+      sharedPrefs.setInt('money', money);
+      sharedPrefs.setInt('torqueUpgrades', torqueUpgrades);
+    }
+  }
+
+  void resetProgress() {
+    money = 0;
+    highScore = 0;
+    torqueUpgrades = 0;
+    speedUpgrades = 0;
+
+    sharedPrefs.setInt('money', money);
+    sharedPrefs.setInt('highScore', highScore);
+    sharedPrefs.setInt('torqueUpgrades', torqueUpgrades);
+    sharedPrefs.setInt('speedUpgrades', speedUpgrades);
   }
 
   @override

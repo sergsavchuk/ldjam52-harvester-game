@@ -50,6 +50,13 @@ class HarvesterMenuState extends State<HarvesterMenu> {
                       child: Text(widget.game.started ? "Continue" : "Play",
                           style: GoogleFonts.rubikBubbles(fontSize: 24))),
                   TextButton(
+                      onPressed: () {
+                        widget.game.resetProgress();
+                        setState(() {});
+                      },
+                      child: Text("Reset progress",
+                          style: GoogleFonts.rubikBubbles(fontSize: 24))),
+                  TextButton(
                       onPressed: () => exit(0),
                       child: Text("Exit",
                           style: GoogleFonts.rubikBubbles(fontSize: 24))),
@@ -57,10 +64,18 @@ class HarvesterMenuState extends State<HarvesterMenu> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _upgradeButton("Speed", () => 1, () => widget.game.money,
-                          Image.asset('assets/icon/speed.png')),
-                      _upgradeButton("Torque", () => 1, () => widget.game.money,
-                          Image.asset('assets/icon/torque.png')),
+                      _upgradeButton(
+                          "Speed",
+                          () => widget.game.speedUpgradeCost(),
+                          () => widget.game.money,
+                          Image.asset('assets/icon/speed.png'),
+                          widget.game.buySpeedUpgrade),
+                      _upgradeButton(
+                          "Torque",
+                          () => widget.game.torqueUpgradeCost(),
+                          () => widget.game.money,
+                          Image.asset('assets/icon/torque.png'),
+                          widget.game.buyTorqueUpgrade),
                     ],
                   ),
                   const Padding(
@@ -68,7 +83,8 @@ class HarvesterMenuState extends State<HarvesterMenu> {
                   ),
                   Visibility(
                       visible: upgradeInfoVisible,
-                      child: Text(upgradeInfoText, textAlign: TextAlign.center,
+                      child: Text(upgradeInfoText,
+                          textAlign: TextAlign.center,
                           style: GoogleFonts.rubikBubbles())),
                   Expanded(
                       child: Container(
@@ -82,7 +98,7 @@ class HarvesterMenuState extends State<HarvesterMenu> {
   }
 
   Widget _upgradeButton(String upgradeName, IntFunction upgradeCostProvider,
-      IntFunction currentMoneyProvider, Image icon) {
+      IntFunction currentMoneyProvider, Image icon, VoidCallback onPress) {
     return MouseRegion(
       child: Container(
           decoration: BoxDecoration(
@@ -98,7 +114,13 @@ class HarvesterMenuState extends State<HarvesterMenu> {
           ),
           child: IconButton(
             iconSize: 70,
-            onPressed: null,
+            onPressed: () {
+              onPress();
+              setState(() {
+                upgradeInfoText =
+                    "$upgradeName upgrade Cost: ${upgradeCostProvider()}  Your money: ${currentMoneyProvider()}";
+              });
+            },
             icon: icon,
           )),
       onEnter: (_) => {
