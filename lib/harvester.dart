@@ -6,7 +6,7 @@ import 'package:another_harvester_game/harvester_game.dart';
 import 'package:flutter/services.dart';
 
 class Harvester extends BodyComponent<HarvesterGame> {
-  final _size = Vector2(1, 2);
+  final _size = Vector2(1, 1.52);
 
   late final SpriteComponent sprite;
 
@@ -22,6 +22,7 @@ class Harvester extends BodyComponent<HarvesterGame> {
   final _maxForwardSpeed = 8.0 * speedMultiplier;
   final _maxBackwardSpeed = -3.5 * speedMultiplier;
   final _maxDriveForce = 8.0 * speedMultiplier;
+  final _speedUpgradeValue = 4.0;
 
   final _torque = 1.0;
 
@@ -72,12 +73,12 @@ class Harvester extends BodyComponent<HarvesterGame> {
     final currentSpeed = _forwardVelocity.dot(currentForwardNormal);
     var force = 0.0;
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyW) &&
-        currentSpeed < _maxForwardSpeed * (gameRef.speedUpgrades + 1)) {
-      force = _maxDriveForce * (gameRef.speedUpgrades + 1);
+        currentSpeed < _maxForwardSpeed + (gameRef.speedUpgrades * _speedUpgradeValue)) {
+      force = _maxDriveForce + (gameRef.speedUpgrades * _speedUpgradeValue) / 2;
     }
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyS) &&
-        currentSpeed > _maxBackwardSpeed * (gameRef.speedUpgrades + 1)) {
-      force = -_maxDriveForce * (gameRef.speedUpgrades + 1);
+        currentSpeed > _maxBackwardSpeed - (gameRef.speedUpgrades * _speedUpgradeValue)) {
+      force = -_maxDriveForce - (gameRef.speedUpgrades * _speedUpgradeValue) / 2;
     }
 
     if (force.abs() > 0) {
@@ -87,11 +88,11 @@ class Harvester extends BodyComponent<HarvesterGame> {
 
   void _updateTurn(double dt) {
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyA)) {
-      body.applyTorque(-_torque - gameRef.torqueUpgrades);
+      body.applyTorque(-_torque - gameRef.torqueUpgrades / 2);
     }
 
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyD)) {
-      body.applyTorque(_torque + gameRef.torqueUpgrades);
+      body.applyTorque(_torque + gameRef.torqueUpgrades / 2);
     }
   }
 

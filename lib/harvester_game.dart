@@ -48,6 +48,7 @@ class HarvesterGame extends Forge2DGame
 
   late final Sprite wheatSprite;
   late final Sprite haySprite;
+  late final Sprite plusTimeSprite;
 
   late final AudioPool _popSoundPool;
   late final SharedPreferences sharedPrefs;
@@ -74,6 +75,7 @@ class HarvesterGame extends Forge2DGame
 
     wheatSprite = await loadSprite('cute_wheat.png');
     haySprite = await loadSprite('hay.png');
+    plusTimeSprite = await loadSprite('plus_time.png');
 
     sharedPrefs = await SharedPreferences.getInstance();
 
@@ -116,6 +118,7 @@ class HarvesterGame extends Forge2DGame
   void start() async {
     _timePassed = 0;
     score = 0;
+    _levelTime = 30;
     overlays.clear();
 
     started = true;
@@ -285,6 +288,10 @@ class HarvesterGame extends Forge2DGame
     super.onRemove();
 
     FlameAudio.bgm.dispose();
+  }
+
+  void timeBonus() {
+    _levelTime += 5;
   }
 }
 
