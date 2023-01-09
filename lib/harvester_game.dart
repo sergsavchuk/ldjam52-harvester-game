@@ -35,6 +35,7 @@ class HarvesterGame extends Forge2DGame
   late WheatField wheatField;
   late final TextComponent _scoreComponent;
   late final TextComponent _timeComponent;
+  late final TextComponent _controlsComponent;
 
   late final Set<LogicalKeyboardKey> pressedKeySet = {};
 
@@ -66,6 +67,8 @@ class HarvesterGame extends Forge2DGame
   int speedUpgrades = 0;
   int torqueUpgrades = 0;
 
+  bool showControls = true;
+
   HarvesterGame() : super(gravity: Vector2.zero(), zoom: zoom);
 
   @override
@@ -85,6 +88,7 @@ class HarvesterGame extends Forge2DGame
     highScore = sharedPrefs.getInt('highScore') ?? 0;
     speedUpgrades = sharedPrefs.getInt('speedUpgrades') ?? 0;
     torqueUpgrades = sharedPrefs.getInt('torqueUpgrades') ?? 0;
+    showControls = sharedPrefs.getBool('showControls') ?? true;
 
     add(_Background(size: screenSize)..positionType = PositionType.viewport);
 
@@ -104,6 +108,19 @@ class HarvesterGame extends Forge2DGame
         position: Vector2(30, 30))
       ..positionType = PositionType.viewport
       ..priority = double.maxFinite.toInt());
+
+    _controlsComponent = TextComponent(
+        text:
+            "WASD to move\n Mouse wheel to zoom in/out\n Space to hide/show this message",
+        textRenderer: TextPaint(
+            style: GoogleFonts.rubikBubbles(fontSize: 60, color: Colors.white)),
+        anchor: Anchor.center,
+        position: screenSize / 2)
+      ..positionType = PositionType.viewport
+      ..priority = double.maxFinite.toInt();
+    if (showControls) {
+      add(_controlsComponent);
+    }
 
     add(FpsTextComponent(
       position: Vector2(0, screenSize.y),
@@ -219,6 +236,15 @@ class HarvesterGame extends Forge2DGame
 
     if (keysPressed.contains(LogicalKeyboardKey.escape) && started) {
       pause();
+    }
+
+    if (keysPressed.contains(LogicalKeyboardKey.space) && started) {
+      sharedPrefs.setBool('showControls', showControls = !showControls);
+      if (showControls) {
+        add(_controlsComponent);
+      } else {
+        remove(_controlsComponent);
+      }
     }
 
     if (!running) {
