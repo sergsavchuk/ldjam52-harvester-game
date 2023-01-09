@@ -13,6 +13,7 @@ import 'package:another_harvester_game/map_object.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const zoom = 100.0;
 
@@ -49,6 +50,7 @@ class HarvesterGame extends Forge2DGame
   late final Sprite haySprite;
 
   late final AudioPool _popSoundPool;
+  late final SharedPreferences _sharedPrefs;
 
   bool started = false;
   bool running = false;
@@ -73,6 +75,10 @@ class HarvesterGame extends Forge2DGame
 
     _popSoundPool = await FlameAudio.createPool('sounds/pop.mp3',
         minPlayers: 1, maxPlayers: 4);
+    _sharedPrefs = await SharedPreferences.getInstance();
+
+    money = _sharedPrefs.getInt('money') ?? 0;
+    highScore = _sharedPrefs.getInt('highScore') ?? 0;
 
     add(_Background(size: screenSize)..positionType = PositionType.viewport);
 
@@ -128,6 +134,9 @@ class HarvesterGame extends Forge2DGame
     started = false;
     highScore = max(score, highScore);
     money += score ~/ _pointsToSpawHay;
+
+    _sharedPrefs.setInt('money', money);
+    _sharedPrefs.setInt('highScore', highScore);
 
     despawn();
     spawn();
