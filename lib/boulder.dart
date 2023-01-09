@@ -15,8 +15,8 @@ class Boulder extends BodyComponent<HarvesterGame> {
 
     add(SpriteComponent(
         anchor: Anchor.center,
-        sprite: await gameRef.loadSprite('dummy_boulder.png'),
-        size: Vector2(1.54, 1)));
+        sprite: await gameRef.loadSprite('boulder.png'),
+        size: Vector2(1.0, 1.16)));
   }
 
   @override
@@ -27,7 +27,7 @@ class Boulder extends BodyComponent<HarvesterGame> {
       type: BodyType.static,
     );
 
-    final shape = CircleShape()..radius = .5;
+    final shape = CircleShape()..radius = .4;
     final fixtureDef = FixtureDef(shape);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
