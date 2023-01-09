@@ -29,6 +29,17 @@ final List<LogicalKeyboardKey> controls = [
   LogicalKeyboardKey.keyS,
 ];
 
+final Map<LogicalKeyboardKey, LogicalKeyboardKey> keyMap = {
+  LogicalKeyboardKey.arrowUp: LogicalKeyboardKey.keyW,
+  LogicalKeyboardKey.arrowLeft: LogicalKeyboardKey.keyA,
+  LogicalKeyboardKey.arrowRight: LogicalKeyboardKey.keyD,
+  LogicalKeyboardKey.arrowDown: LogicalKeyboardKey.keyS,
+  const LogicalKeyboardKey(0x00000446): LogicalKeyboardKey.keyW,
+  const LogicalKeyboardKey(0x00000444): LogicalKeyboardKey.keyA,
+  const LogicalKeyboardKey(0x00000432): LogicalKeyboardKey.keyD,
+  const LogicalKeyboardKey(0x0000044b): LogicalKeyboardKey.keyS,
+};
+
 class HarvesterGame extends Forge2DGame
     with PanDetector, ScrollDetector, KeyboardEvents {
   late Harvester harvester;
@@ -254,6 +265,10 @@ class HarvesterGame extends Forge2DGame
     pressedKeySet.clear();
 
     for (var key in keysPressed) {
+      if (keyMap.containsKey(key)) {
+        key = keyMap[key]!;
+      }
+
       if (controls.contains(key)) {
         pressedKeySet.add(key);
       }
