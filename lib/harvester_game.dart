@@ -49,6 +49,7 @@ class HarvesterGame extends Forge2DGame
   late final Sprite wheatSprite;
   late final Sprite haySprite;
   late final Sprite plusTimeSprite;
+  late final Sprite groundSprite;
 
   late final AudioPool _popSoundPool;
   late final SharedPreferences sharedPrefs;
@@ -76,6 +77,7 @@ class HarvesterGame extends Forge2DGame
     wheatSprite = await loadSprite('cute_wheat.png');
     haySprite = await loadSprite('hay.png');
     plusTimeSprite = await loadSprite('plus_time.png');
+    groundSprite = await loadSprite('ground_tile.png');
 
     sharedPrefs = await SharedPreferences.getInstance();
 

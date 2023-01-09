@@ -49,6 +49,7 @@ class WheatField extends Component with HasGameRef<HarvesterGame> {
           chunksMap[chunkPos] = WheatChunk(
               size: chunkSize,
               position: chunkPos,
+              groundImage: gameRef.groundSprite.image,
               initialObjectCreator: initialObjectCreator);
 
           _spawnBoldersAndBonuses(chunksMap[chunkPos]!);

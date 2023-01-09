@@ -6,19 +6,36 @@ import 'package:another_harvester_game/map_object.dart';
 
 class WheatChunk {
   static final _paint = Paint();
+  static final additionalSize = Vector2(0.01, 0.01);
 
   final int size;
   final Vector2 position;
   final List<List<MapObject?>> mapObjects;
+  final Image groundImage;
 
   WheatChunk(
       {required this.size,
       required this.position,
+      required this.groundImage,
       MapObjectCreator? initialObjectCreator})
       : mapObjects = List.generate(size,
             (_) => List.generate(size, (__) => initialObjectCreator?.call()));
 
   void render(Canvas canvas) {
+    for (int i = 0; i < mapObjects.length; i++) {
+      for (int j = 0; j < mapObjects[i].length; j++) {
+        if (mapObjects[i][j] == null) {
+          canvas.drawImageRect(
+              groundImage,
+              Rect.fromLTWH(0, 0, groundImage.width.toDouble(),
+                  groundImage.height.toDouble()),
+              Rect.fromLTWH(position.x * size + i, position.y * size + j,
+                  1 + additionalSize.x, 1 + additionalSize.y),
+              _paint);
+        }
+      }
+    }
+
     for (int i = 0; i < mapObjects.length; i++) {
       for (int j = 0; j < mapObjects[i].length; j++) {
         if (mapObjects[i][j] == null) {
@@ -28,7 +45,6 @@ class WheatChunk {
         // TODO maybe drawAtlas is suitable here
 
         final mapObject = mapObjects[i][j]!;
-        final additionalSize = Vector2(0.01, 0.01);
         canvas.drawImageRect(
             mapObject.image,
             Rect.fromLTWH(0, 0, mapObject.image.width.toDouble(),
