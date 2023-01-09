@@ -75,7 +75,7 @@ class HarvesterGame extends Forge2DGame
     camera.viewport = FixedResolutionViewport(screenSize);
 
     wheatSprite = await loadSprite('cute_wheat.png');
-    haySprite = await loadSprite('hay.png');
+    haySprite = await loadSprite('hay_bale.png');
     plusTimeSprite = await loadSprite('plus_time.png');
     groundSprite = await loadSprite('ground_tile.png');
 
