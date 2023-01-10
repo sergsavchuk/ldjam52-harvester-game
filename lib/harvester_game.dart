@@ -143,10 +143,13 @@ class HarvesterGame extends Forge2DGame
 
     _popSoundPool = await FlameAudio.createPool('sounds/pop2.flac',
         minPlayers: 1, maxPlayers: 4);
-    await FlameAudio.bgm.play('sounds/country-loop.wav');
   }
 
   void start() async {
+    if (!FlameAudio.bgm.isPlaying) {
+      FlameAudio.bgm.play('sounds/country-loop.wav');
+    }
+
     _timePassed = 0;
     score = 0;
     _levelTime = 30;
