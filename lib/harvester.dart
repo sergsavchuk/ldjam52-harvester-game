@@ -73,12 +73,18 @@ class Harvester extends BodyComponent<HarvesterGame> {
     final currentSpeed = _forwardVelocity.dot(currentForwardNormal);
     var force = 0.0;
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyW) &&
-        currentSpeed < _maxForwardSpeed + (gameRef.speedUpgrades * _speedUpgradeValue)) {
-      force = _maxDriveForce + (gameRef.speedUpgrades * _speedUpgradeValue) / 2;
+        currentSpeed <
+            _maxForwardSpeed +
+                (gameRef.save.speedUpgrades * _speedUpgradeValue)) {
+      force = _maxDriveForce +
+          (gameRef.save.speedUpgrades * _speedUpgradeValue) / 2;
     }
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyS) &&
-        currentSpeed > _maxBackwardSpeed - (gameRef.speedUpgrades * _speedUpgradeValue)) {
-      force = -_maxDriveForce - (gameRef.speedUpgrades * _speedUpgradeValue) / 2;
+        currentSpeed >
+            _maxBackwardSpeed -
+                (gameRef.save.speedUpgrades * _speedUpgradeValue)) {
+      force = -_maxDriveForce -
+          (gameRef.save.speedUpgrades * _speedUpgradeValue) / 2;
     }
 
     if (force.abs() > 0) {
@@ -88,11 +94,11 @@ class Harvester extends BodyComponent<HarvesterGame> {
 
   void _updateTurn(double dt) {
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyA)) {
-      body.applyTorque(-_torque - gameRef.torqueUpgrades / 2);
+      body.applyTorque(-_torque - gameRef.save.torqueUpgrades / 2);
     }
 
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyD)) {
-      body.applyTorque(_torque + gameRef.torqueUpgrades / 2);
+      body.applyTorque(_torque + gameRef.save.torqueUpgrades / 2);
     }
   }
 

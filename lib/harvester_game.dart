@@ -1,8 +1,8 @@
 import 'dart:math';
 
+import 'package:another_harvester_game/game_save.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame_audio/audio_pool.dart';
 import 'package:flame_audio/flame_audio.dart';
@@ -65,7 +65,6 @@ class HarvesterGame extends Forge2DGame
   late final Sprite groundSprite;
 
   late final AudioPool _popSoundPool;
-  late final SharedPreferences sharedPrefs;
 
   bool started = false;
   bool running = false;
@@ -74,12 +73,8 @@ class HarvesterGame extends Forge2DGame
   double _timePassed = 0;
 
   int score = 0;
-  int highScore = 0;
-  int money = 0;
-  int speedUpgrades = 0;
-  int torqueUpgrades = 0;
 
-  bool showControls = true;
+  late final GameSave save;
 
   HarvesterGame() : super(gravity: Vector2.zero(), zoom: zoom);
 
@@ -94,13 +89,7 @@ class HarvesterGame extends Forge2DGame
     plusTimeSprite = await loadSprite('plus_time.png');
     groundSprite = await loadSprite('ground_tile.png');
 
-    sharedPrefs = await SharedPreferences.getInstance();
-
-    money = sharedPrefs.getInt('money') ?? 0;
-    highScore = sharedPrefs.getInt('highScore') ?? 0;
-    speedUpgrades = sharedPrefs.getInt('speedUpgrades') ?? 0;
-    torqueUpgrades = sharedPrefs.getInt('torqueUpgrades') ?? 0;
-    showControls = sharedPrefs.getBool('showControls') ?? true;
+    save = GameSave(await SharedPreferences.getInstance());
 
     add(_Background(size: screenSize)..positionType = PositionType.viewport);
 
@@ -130,7 +119,7 @@ class HarvesterGame extends Forge2DGame
         position: screenSize / 2)
       ..positionType = PositionType.viewport
       ..priority = double.maxFinite.toInt();
-    if (showControls) {
+    if (save.showControls) {
       add(_controlsComponent);
     }
 
@@ -175,11 +164,9 @@ class HarvesterGame extends Forge2DGame
 
     running = false;
     started = false;
-    highScore = max(score, highScore);
-    money += score ~/ _pointsToSpawHay;
 
-    sharedPrefs.setInt('money', money);
-    sharedPrefs.setInt('highScore', highScore);
+    save.updateHighScore(score);
+    save.addMoney(score ~/ _pointsToSpawHay);
 
     despawn();
     spawn();
@@ -207,41 +194,27 @@ class HarvesterGame extends Forge2DGame
   }
 
   int speedUpgradeCost() {
-    return pow(3, 3 + speedUpgrades).toInt();
+    return pow(3, 3 + save.speedUpgrades).toInt();
   }
 
   int torqueUpgradeCost() {
-    return pow(3, 3 + torqueUpgrades).toInt();
+    return pow(3, 3 + save.torqueUpgrades).toInt();
   }
 
   void buySpeedUpgrade() {
-    if (money >= speedUpgradeCost()) {
-      money -= speedUpgradeCost();
-      speedUpgrades += 1;
-      sharedPrefs.setInt('money', money);
-      sharedPrefs.setInt('speedUpgrades', speedUpgrades);
+    final upgradeCost = speedUpgradeCost();
+    if (save.money >= upgradeCost) {
+      save.addMoney(-upgradeCost);
+      save.increaseSpeedUpgrades();
     }
   }
 
   void buyTorqueUpgrade() {
-    if (money >= torqueUpgradeCost()) {
-      money -= torqueUpgradeCost();
-      torqueUpgrades += 1;
-      sharedPrefs.setInt('money', money);
-      sharedPrefs.setInt('torqueUpgrades', torqueUpgrades);
+    final upgradeCost = torqueUpgradeCost();
+    if (save.money >= upgradeCost) {
+      save.addMoney(-upgradeCost);
+      save.increaseTorqueUpgrades();
     }
-  }
-
-  void resetProgress() {
-    money = 0;
-    highScore = 0;
-    torqueUpgrades = 0;
-    speedUpgrades = 0;
-
-    sharedPrefs.setInt('money', money);
-    sharedPrefs.setInt('highScore', highScore);
-    sharedPrefs.setInt('torqueUpgrades', torqueUpgrades);
-    sharedPrefs.setInt('speedUpgrades', speedUpgrades);
   }
 
   @override
@@ -254,8 +227,8 @@ class HarvesterGame extends Forge2DGame
     }
 
     if (keysPressed.contains(LogicalKeyboardKey.space) && started) {
-      sharedPrefs.setBool('showControls', showControls = !showControls);
-      if (showControls) {
+      save.invertShowControls();
+      if (save.showControls) {
         add(_controlsComponent);
       } else {
         remove(_controlsComponent);

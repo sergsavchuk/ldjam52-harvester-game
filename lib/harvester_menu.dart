@@ -51,7 +51,7 @@ class HarvesterMenuState extends State<HarvesterMenu> {
                           style: GoogleFonts.rubikBubbles(fontSize: 24))),
                   TextButton(
                       onPressed: () {
-                        widget.game.resetProgress();
+                        widget.game.save.resetProgress();
                         setState(() {});
                       },
                       child: Text("Reset progress",
@@ -67,13 +67,13 @@ class HarvesterMenuState extends State<HarvesterMenu> {
                       _upgradeButton(
                           "Speed",
                           () => widget.game.speedUpgradeCost(),
-                          () => widget.game.money,
+                          () => widget.game.save.money,
                           Image.asset('assets/icon/speed.png'),
                           widget.game.buySpeedUpgrade),
                       _upgradeButton(
                           "Torque",
                           () => widget.game.torqueUpgradeCost(),
-                          () => widget.game.money,
+                          () => widget.game.save.money,
                           Image.asset('assets/icon/torque.png'),
                           widget.game.buyTorqueUpgrade),
                     ],
@@ -90,7 +90,8 @@ class HarvesterMenuState extends State<HarvesterMenu> {
                       child: Container(
                           padding: const EdgeInsets.only(bottom: 20),
                           alignment: Alignment.bottomCenter,
-                          child: Text("Highscore: ${widget.game.highScore}",
+                          child: Text(
+                              "Highscore: ${widget.game.save.highScore}",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.rubikBubbles(
                                   color: Colors.white, fontSize: 24))))
