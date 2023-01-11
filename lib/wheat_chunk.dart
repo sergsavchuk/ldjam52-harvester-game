@@ -2,71 +2,66 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:another_harvester_game/harvester_game.dart';
-import 'package:another_harvester_game/map_object.dart';
 
 class WheatChunk {
-  static final _paint = Paint();
-  static final additionalSize = Vector2(0.01, 0.01);
+  /// Additional size for each rendered sprite so there is no gap between tiles
+  static final additionalRenderSize = Vector2(0.01, 0.01);
+
+  final groundSize = Vector2(1.0, 1.0) + additionalRenderSize;
+  final wheatSize = Vector2(1.0, 1.16) + additionalRenderSize;
+
+  final Sprite groundSprite;
+  final Sprite wheatSprite;
 
   final int size;
   final Vector2 position;
-  final List<List<MapObject?>> mapObjects;
-  final Image groundImage;
+
+  // TODO maybe replace with Map or somethin' ?
+  final List<List<bool>> wheatPresence;
 
   WheatChunk(
       {required this.size,
       required this.position,
-      required this.groundImage,
-      MapObjectCreator? initialObjectCreator})
-      : mapObjects = List.generate(size,
-            (_) => List.generate(size, (__) => initialObjectCreator?.call()));
+      required this.groundSprite,
+      required this.wheatSprite})
+      : wheatPresence =
+            List.generate(size, (_) => List.generate(size, (_) => true));
 
+  // TODO maybe drawAtlas is suitable here
   void render(Canvas canvas) {
-    for (int i = 0; i < mapObjects.length; i++) {
-      for (int j = 0; j < mapObjects[i].length; j++) {
-        if (mapObjects[i][j] == null) {
-          canvas.drawImageRect(
-              groundImage,
-              Rect.fromLTWH(0, 0, groundImage.width.toDouble(),
-                  groundImage.height.toDouble()),
-              Rect.fromLTWH(position.x * size + i, position.y * size + j,
-                  1 + additionalSize.x, 1 + additionalSize.y),
-              _paint);
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (wheatPresence[i][j] == false) {
+          groundSprite.render(canvas,
+              position: Vector2(position.x * size + i, position.y * size + j),
+              size: groundSize);
         }
       }
     }
 
-    for (int i = 0; i < mapObjects.length; i++) {
-      for (int j = 0; j < mapObjects[i].length; j++) {
-        if (mapObjects[i][j] == null) {
+    for (int i = 0; i < wheatPresence.length; i++) {
+      for (int j = 0; j < wheatPresence[i].length; j++) {
+        if (wheatPresence[i][j] == false) {
           continue;
         }
 
-        // TODO maybe drawAtlas is suitable here
-
-        final mapObject = mapObjects[i][j]!;
-        canvas.drawImageRect(
-            mapObject.image,
-            Rect.fromLTWH(0, 0, mapObject.image.width.toDouble(),
-                mapObject.image.height.toDouble()),
-            Rect.fromLTWH(
-                position.x * size + i,
-                position.y * size + j,
-                mapObject.size.x + additionalSize.x,
-                mapObject.size.y + additionalSize.y),
-            _paint);
+        wheatSprite.render(canvas,
+            position: Vector2(position.x * size + i, position.y * size + j),
+            size: wheatSize);
       }
     }
   }
 
-  void tryCollect(Vector2 gamePos, HarvesterGame gameRef) {
+  /// Returns true if there is wheat at {gamePos} and removes it.
+  bool tryCollectWheat(Vector2 gamePos) {
     final innerPosX = (gamePos.x % size + size).floor() % size;
     final innerPosY = (gamePos.y % size + size).floor() % size;
 
-    if (mapObjects[innerPosX][innerPosY] != null) {
-      gameRef.increaseScore(1);
+    if (wheatPresence[innerPosX][innerPosY]) {
+      wheatPresence[innerPosX][innerPosY] = false;
+      return true;
     }
 
-    mapObjects[innerPosX][innerPosY] = null;
+    return false;
   }
 }

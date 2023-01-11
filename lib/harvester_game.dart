@@ -10,7 +10,6 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:another_harvester_game/harvester.dart';
 import 'package:another_harvester_game/hay.dart';
 import 'package:another_harvester_game/wheat_field.dart';
-import 'package:another_harvester_game/map_object.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -100,7 +99,7 @@ class HarvesterGame extends Forge2DGame
         position: Vector2(screenSize.x - 30, 30))
       ..positionType = PositionType.viewport
       ..priority = double.maxFinite.toInt());
-    increaseScore(0);
+    _increaseScore(0);
 
     add(_timeComponent = TextComponent(
         textRenderer: TextPaint(
@@ -175,11 +174,7 @@ class HarvesterGame extends Forge2DGame
   }
 
   Future<void> spawn() async {
-    wheatField = WheatField(
-        renderDistance: 2,
-        chunkSize: 20,
-        initialObjectCreator: () =>
-            MapObject(image: wheatSprite.image, size: Vector2(1.0, 1.16)));
+    wheatField = WheatField(renderDistance: 2, chunkSize: 20);
     add(wheatField);
 
     await add(harvester = Harvester()..priority = 1000);
@@ -285,7 +280,11 @@ class HarvesterGame extends Forge2DGame
     return Colors.black; // TODO pick more suitable color
   }
 
-  void increaseScore(int value) {
+  void wheatCollected() {
+    _increaseScore(1);
+  }
+
+  void _increaseScore(int value) {
     if (!started) {
       return;
     }

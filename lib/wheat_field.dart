@@ -6,24 +6,19 @@ import 'package:flame/components.dart';
 import 'package:another_harvester_game/boulder.dart';
 import 'package:another_harvester_game/wheat_chunk.dart';
 import 'package:another_harvester_game/harvester_game.dart';
-import 'package:another_harvester_game/map_object.dart';
 
 class WheatField extends Component with HasGameRef<HarvesterGame> {
   final int renderDistance;
   final int chunkSize;
 
   Vector2? renderCenter;
-  MapObjectCreator? initialObjectCreator;
 
   final Map<Vector2, WheatChunk> chunksMap = {};
 
   late final _spawnPositionUtilityList =
       List.generate(chunkSize * chunkSize, (index) => index);
 
-  WheatField(
-      {required this.renderDistance,
-      required this.chunkSize,
-      this.initialObjectCreator});
+  WheatField({required this.renderDistance, required this.chunkSize});
 
   @override
   void update(double dt) {
@@ -49,16 +44,18 @@ class WheatField extends Component with HasGameRef<HarvesterGame> {
           chunksMap[chunkPos] = WheatChunk(
               size: chunkSize,
               position: chunkPos,
-              groundImage: gameRef.groundSprite.image,
-              initialObjectCreator: initialObjectCreator);
+              groundSprite: gameRef.groundSprite,
+              wheatSprite: gameRef.wheatSprite);
 
           _spawnBoldersAndBonuses(chunksMap[chunkPos]!);
         }
       }
     }
 
-    chunksMap[Vector2(currentChunkX.toDouble(), currentChunkY.toDouble())]
-        ?.tryCollect(center, gameRef);
+    if (chunksMap[Vector2(currentChunkX.toDouble(), currentChunkY.toDouble())]!
+        .tryCollectWheat(center)) {
+      gameRef.wheatCollected();
+    }
   }
 
   @override
