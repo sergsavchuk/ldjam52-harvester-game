@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:another_harvester_game/game_save.dart';
+import 'package:another_harvester_game/harvester_app.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -152,7 +153,7 @@ class HarvesterGame extends Forge2DGame
       pressedKeySet.clear();
 
       running = false;
-      overlays.add('menu');
+      overlays.add(HarvesterApp.menuOverlay);
     } else {
       start();
     }
@@ -170,7 +171,7 @@ class HarvesterGame extends Forge2DGame
     despawn();
     spawn();
 
-    overlays.add('gameover');
+    overlays.add(HarvesterApp.gameOverOverlay);
   }
 
   Future<void> spawn() async {

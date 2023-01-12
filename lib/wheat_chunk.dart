@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:another_harvester_game/harvester_game.dart';
 
 class WheatChunk {
   /// Additional size for each rendered sprite so there is no gap between tiles

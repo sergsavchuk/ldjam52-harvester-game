@@ -1,3 +1,4 @@
+import 'package:another_harvester_game/harvester_app.dart';
 import 'package:another_harvester_game/harvester_game.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -34,7 +35,7 @@ class GameOver extends StatelessWidget {
                       TextButton(
                           onPressed: () {
                             game.overlays.clear();
-                            game.overlays.add('menu');
+                            game.overlays.add(HarvesterApp.menuOverlay);
                           },
                           child: Text("OK",
                               style: GoogleFonts.rubikBubbles(fontSize: 18))),
