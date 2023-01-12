@@ -17,17 +17,9 @@ class HarvesterComponent extends BodyComponent<HarvesterGame> {
     Vector2(-_size.x / 2, _size.y / 2),
   ];
 
-  static const speedMultiplier = 1;
-
-  final _maxForwardSpeed = 8.0 * speedMultiplier;
-  final _maxBackwardSpeed = -3.5 * speedMultiplier;
-  final _maxDriveForce = 8.0 * speedMultiplier;
-  final _speedUpgradeValue = 4.0;
-
   final _torque = 1.0;
-
-  late final _maxLateralImpulse = 7.5;
-  final double _currentTraction = 1.0;
+  final _forwardImpulse = 0.1;
+  final _backwardImpulse = 0.05;
 
   @override
   Future<void> onLoad() async {
@@ -46,7 +38,8 @@ class HarvesterComponent extends BodyComponent<HarvesterGame> {
       ..position = gameRef.size / 2;
     final body = world.createBody(def)
       ..userData = this
-      ..angularDamping = 3.0;
+      ..angularDamping = 15.0
+      ..linearDamping = 5.0;
 
     final shape = PolygonShape()..set(vertices);
     final fixtureDef = FixtureDef(shape)
@@ -66,33 +59,19 @@ class HarvesterComponent extends BodyComponent<HarvesterGame> {
       return;
     }
 
-    _updateTurn(dt);
-    _updateFriction();
-
     final currentForwardNormal = body.worldVector(Vector2(0.0, -1.0));
-    final currentSpeed = _forwardVelocity.dot(currentForwardNormal);
-    var force = 0.0;
-    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyW) &&
-        currentSpeed <
-            _maxForwardSpeed +
-                (gameRef.save.speedUpgrades * _speedUpgradeValue)) {
-      force = _maxDriveForce +
-          (gameRef.save.speedUpgrades * _speedUpgradeValue) / 2;
-    }
-    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyS) &&
-        currentSpeed >
-            _maxBackwardSpeed -
-                (gameRef.save.speedUpgrades * _speedUpgradeValue)) {
-      force = -_maxDriveForce -
-          (gameRef.save.speedUpgrades * _speedUpgradeValue) / 2;
+    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyW)) {
+      body.applyLinearImpulse(currentForwardNormal *
+          _forwardImpulse *
+          (gameRef.save.speedUpgrades + 1).toDouble());
     }
 
-    if (force.abs() > 0) {
-      body.applyForce(currentForwardNormal..scale(_currentTraction * force));
+    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyS)) {
+      body.applyLinearImpulse(-currentForwardNormal *
+          _backwardImpulse *
+          (gameRef.save.speedUpgrades + 1).toDouble());
     }
-  }
 
-  void _updateTurn(double dt) {
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyA)) {
       body.applyTorque(-_torque - gameRef.save.torqueUpgrades / 2);
     }
@@ -102,44 +81,8 @@ class HarvesterComponent extends BodyComponent<HarvesterGame> {
     }
   }
 
-  void _updateFriction() {
-    final impulse = _lateralVelocity
-      ..scale(-body.mass)
-      ..clampScalar(-_maxLateralImpulse, _maxLateralImpulse)
-      ..scale(_currentTraction);
-
-    body.applyLinearImpulse(impulse);
-    body.applyAngularImpulse(
-      0.1 * _currentTraction * body.getInertia() * -body.angularVelocity,
-    );
-
-    final currentForwardNormal = _forwardVelocity;
-    final currentForwardSpeed = currentForwardNormal.length;
-    currentForwardNormal.normalize();
-
-    final dragForceMagnitute = -2 * currentForwardSpeed;
-    body.applyForce(
-        currentForwardNormal..scale(_currentTraction * dragForceMagnitute));
-  }
-
   @override
   void render(Canvas canvas) {
     // keep it empty to not draw white rect of BodyComponent
-  }
-
-  // TODO maybe move it up ? or move to game class ?
-  final Vector2 _worldLeft = Vector2(-1.0, 0);
-  final Vector2 _worldUp = Vector2(0, -1.0);
-
-  Vector2 get _lateralVelocity {
-    final currentRightNormal = body.worldVector(_worldLeft);
-    return currentRightNormal
-      ..scale(currentRightNormal.dot(body.linearVelocity));
-  }
-
-  Vector2 get _forwardVelocity {
-    final currentForwardNormal = body.worldVector(_worldUp);
-    return currentForwardNormal
-      ..scale(currentForwardNormal.dot(body.linearVelocity));
   }
 }

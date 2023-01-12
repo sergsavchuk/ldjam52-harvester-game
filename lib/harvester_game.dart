@@ -133,9 +133,9 @@ class HarvesterGame extends Forge2DGame
   }
 
   void start() async {
-    if (!FlameAudio.bgm.isPlaying) {
-      FlameAudio.bgm.play('sounds/country-loop.wav');
-    }
+    // if (!FlameAudio.bgm.isPlaying) {
+    //   FlameAudio.bgm.play('sounds/country-loop.wav');
+    // }
 
     _timePassed = 0;
     score = 0;
