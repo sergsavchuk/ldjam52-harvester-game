@@ -27,6 +27,12 @@ class HarvesterApp extends StatelessWidget {
             gameOverOverlay: (_, game) => GameOverOverlay(game)
           },
           initialActiveOverlays: const [HarvesterApp.menuOverlay],
+          // TODO place appropriate image instead of Container
+          backgroundBuilder: (_) => Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.yellow.shade200,
+          ),
         ));
   }
 }

@@ -91,8 +91,6 @@ class HarvesterGame extends Forge2DGame
 
     save = GameSave(await SharedPreferences.getInstance());
 
-    add(_Background(size: screenSize)..positionType = PositionType.viewport);
-
     add(_scoreComponent = TextComponent(
         textRenderer: TextPaint(
             style: GoogleFonts.rubikBubbles(fontSize: 60, color: Colors.white)),
@@ -276,11 +274,6 @@ class HarvesterGame extends Forge2DGame
     }
   }
 
-  @override
-  Color backgroundColor() {
-    return Colors.black; // TODO pick more suitable color
-  }
-
   void wheatCollected() {
     _increaseScore(1);
   }
@@ -312,14 +305,5 @@ class HarvesterGame extends Forge2DGame
 
   void timeBonus() {
     _levelTime += 5;
-  }
-}
-
-class _Background extends PositionComponent {
-  _Background({super.size});
-
-  @override
-  void render(Canvas canvas) {
-    canvas.drawRect(Rect.fromLTWH(0, 0, width, height), blackPaint);
   }
 }
