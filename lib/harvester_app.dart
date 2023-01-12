@@ -1,6 +1,6 @@
-import 'package:another_harvester_game/game_over.dart';
+import 'package:another_harvester_game/overlays/game_over_overlay.dart';
 import 'package:another_harvester_game/harvester_game.dart';
-import 'package:another_harvester_game/harvester_menu.dart';
+import 'package:another_harvester_game/overlays/menu_overlay.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,8 +23,8 @@ class HarvesterApp extends StatelessWidget {
                   style: GoogleFonts.rubikBubbles(
                       decoration: TextDecoration.none, color: Colors.white))),
           overlayBuilderMap: {
-            menuOverlay: (_, game) => HarvesterMenu(game),
-            gameOverOverlay: (_, game) => GameOver(game)
+            menuOverlay: (_, game) => MenuOverlay(game),
+            gameOverOverlay: (_, game) => GameOverOverlay(game)
           },
           initialActiveOverlays: const [HarvesterApp.menuOverlay],
         ));

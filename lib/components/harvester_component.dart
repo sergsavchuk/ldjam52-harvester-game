@@ -5,7 +5,7 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:another_harvester_game/harvester_game.dart';
 import 'package:flutter/services.dart';
 
-class Harvester extends BodyComponent<HarvesterGame> {
+class HarvesterComponent extends BodyComponent<HarvesterGame> {
   final _size = Vector2(1, 1.556);
 
   late final SpriteComponent sprite;

@@ -3,10 +3,10 @@ import 'package:another_harvester_game/harvester_game.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class GameOver extends StatelessWidget {
+class GameOverOverlay extends StatelessWidget {
   final HarvesterGame game;
 
-  const GameOver(this.game, {super.key});
+  const GameOverOverlay(this.game, {super.key});
 
   @override
   Widget build(BuildContext context) {

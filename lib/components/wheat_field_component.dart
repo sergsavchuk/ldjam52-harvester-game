@@ -1,13 +1,13 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:another_harvester_game/time_bonus.dart';
+import 'package:another_harvester_game/components/time_bonus_component.dart';
 import 'package:flame/components.dart';
-import 'package:another_harvester_game/boulder.dart';
-import 'package:another_harvester_game/wheat_chunk.dart';
+import 'package:another_harvester_game/components/boulder_component.dart';
+import 'package:another_harvester_game/components/wheat_chunk.dart';
 import 'package:another_harvester_game/harvester_game.dart';
 
-class WheatField extends Component with HasGameRef<HarvesterGame> {
+class WheatFieldComponent extends Component with HasGameRef<HarvesterGame> {
   final int renderDistance;
   final int chunkSize;
 
@@ -18,7 +18,7 @@ class WheatField extends Component with HasGameRef<HarvesterGame> {
   late final _spawnPositionUtilityList =
       List.generate(chunkSize * chunkSize, (index) => index);
 
-  WheatField({required this.renderDistance, required this.chunkSize});
+  WheatFieldComponent({required this.renderDistance, required this.chunkSize});
 
   @override
   void update(double dt) {
@@ -98,14 +98,14 @@ class WheatField extends Component with HasGameRef<HarvesterGame> {
     final bouldersCount =
         min(max(chunk.position.x.abs(), chunk.position.y.abs()), maxBoulders);
     for (int i = 0; i < bouldersCount; i++) {
-      add(Boulder(
+      add(BoulderComponent(
           position: chunk.position * chunkSize.toDouble() +
               Vector2((_spawnPositionUtilityList[i] % chunkSize).toDouble(),
                   (_spawnPositionUtilityList[i] ~/ chunkSize).toDouble())));
     }
 
     if (bouldersCount <= 1 || Random().nextDouble() < 1.0 / bouldersCount) {
-      add(TimeBonus(
+      add(TimeBonusComponent(
           position: chunk.position * chunkSize.toDouble() +
               Vector2(
                   (_spawnPositionUtilityList[bouldersCount.toInt()] % chunkSize)

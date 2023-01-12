@@ -4,10 +4,10 @@ import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:another_harvester_game/harvester_game.dart';
 
-class Boulder extends BodyComponent<HarvesterGame> {
+class BoulderComponent extends BodyComponent<HarvesterGame> {
   final Vector2 position;
 
-  Boulder({required this.position});
+  BoulderComponent({required this.position});
 
   @override
   Future<void> onLoad() async {

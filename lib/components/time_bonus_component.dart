@@ -1,16 +1,17 @@
 import 'dart:ui';
 
-import 'package:another_harvester_game/harvester.dart';
+import 'package:another_harvester_game/components/harvester_component.dart';
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:another_harvester_game/harvester_game.dart';
 
-class TimeBonus extends BodyComponent<HarvesterGame> with ContactCallbacks {
+class TimeBonusComponent extends BodyComponent<HarvesterGame>
+    with ContactCallbacks {
   final Vector2 position;
 
   bool collected = false;
 
-  TimeBonus({required this.position});
+  TimeBonusComponent({required this.position});
 
   @override
   Future<void> onLoad() async {
@@ -31,10 +32,9 @@ class TimeBonus extends BodyComponent<HarvesterGame> with ContactCallbacks {
     );
 
     final shape = CircleShape()..radius = .25;
-    final fixtureDef = FixtureDef(shape)..isSensor=true;
+    final fixtureDef = FixtureDef(shape)..isSensor = true;
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
-
 
   @override
   void update(double dt) {
@@ -48,7 +48,7 @@ class TimeBonus extends BodyComponent<HarvesterGame> with ContactCallbacks {
 
   @override
   void beginContact(Object other, Contact contact) {
-    if (other is Harvester) {
+    if (other is HarvesterComponent) {
       gameRef.timeBonus();
       collected = true;
     }

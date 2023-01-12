@@ -6,18 +6,16 @@ import 'package:google_fonts/google_fonts.dart';
 
 typedef IntFunction = int Function();
 
-class HarvesterMenu extends StatefulWidget {
+class MenuOverlay extends StatefulWidget {
   final HarvesterGame game;
 
-  const HarvesterMenu(this.game, {super.key});
+  const MenuOverlay(this.game, {super.key});
 
   @override
-  State<StatefulWidget> createState() {
-    return HarvesterMenuState();
-  }
+  State<StatefulWidget> createState() => MenuOverlayState();
 }
 
-class HarvesterMenuState extends State<HarvesterMenu> {
+class MenuOverlayState extends State<MenuOverlay> {
   bool upgradeInfoVisible = false;
   String upgradeInfoText = "Speed upgrade Cost: 1  Your money: 0";
 

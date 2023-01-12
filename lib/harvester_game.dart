@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:another_harvester_game/components/wheat_field_component.dart';
 import 'package:another_harvester_game/game_save.dart';
 import 'package:another_harvester_game/harvester_app.dart';
 import 'package:flame/components.dart';
@@ -8,9 +9,8 @@ import 'package:flame/game.dart';
 import 'package:flame_audio/audio_pool.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:another_harvester_game/harvester.dart';
-import 'package:another_harvester_game/hay.dart';
-import 'package:another_harvester_game/wheat_field.dart';
+import 'package:another_harvester_game/components/harvester_component.dart';
+import 'package:another_harvester_game/components/hay_component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -43,8 +43,8 @@ final Map<LogicalKeyboardKey, LogicalKeyboardKey> keyMap = {
 
 class HarvesterGame extends Forge2DGame
     with PanDetector, ScrollDetector, KeyboardEvents {
-  late Harvester harvester;
-  late WheatField wheatField;
+  late HarvesterComponent harvester;
+  late WheatFieldComponent wheatField;
   late final TextComponent _scoreComponent;
   late final TextComponent _timeComponent;
   late final TextComponent _controlsComponent;
@@ -175,10 +175,10 @@ class HarvesterGame extends Forge2DGame
   }
 
   Future<void> spawn() async {
-    wheatField = WheatField(renderDistance: 2, chunkSize: 20);
+    wheatField = WheatFieldComponent(renderDistance: 2, chunkSize: 20);
     add(wheatField);
 
-    await add(harvester = Harvester()..priority = 1000);
+    await add(harvester = HarvesterComponent()..priority = 1000);
     camera.followVector2(harvester.body.position);
     wheatField.renderCenter = harvester.body.position;
   }
@@ -186,7 +186,7 @@ class HarvesterGame extends Forge2DGame
   void despawn() {
     remove(wheatField);
     remove(harvester);
-    removeWhere((component) => component is Hay);
+    removeWhere((component) => component is HayComponent);
   }
 
   int speedUpgradeCost() {
@@ -299,7 +299,7 @@ class HarvesterGame extends Forge2DGame
   }
 
   void _spawnHay() {
-    add(Hay(sprite: haySprite, position: harvester.body.position));
+    add(HayComponent(sprite: haySprite, position: harvester.body.position));
     _popSoundPool.start();
   }
 
