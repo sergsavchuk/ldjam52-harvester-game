@@ -8,8 +8,6 @@ import 'package:flutter/services.dart';
 class HarvesterComponent extends BodyComponent<HarvesterGame> {
   final _size = Vector2(1, 1.556);
 
-  late final SpriteComponent sprite;
-
   late final vertices = <Vector2>[
     Vector2(-_size.x / 2, -_size.y / 2),
     Vector2(_size.x / 2, -_size.y / 2),
@@ -25,7 +23,7 @@ class HarvesterComponent extends BodyComponent<HarvesterGame> {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    add(sprite = SpriteComponent(
+    add(SpriteComponent(
         anchor: Anchor.center,
         size: _size,
         sprite: await gameRef.loadSprite('harvester_new.png')));
@@ -59,7 +57,9 @@ class HarvesterComponent extends BodyComponent<HarvesterGame> {
       return;
     }
 
-    final currentForwardNormal = body.worldVector(Vector2(0.0, -1.0));
+    // Use lazy initialization to not calculate normal if there is no input.
+    late final Vector2 currentForwardNormal =
+        body.worldVector(Vector2(0.0, -1.0));
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyW)) {
       body.applyLinearImpulse(currentForwardNormal *
           _forwardImpulse *
