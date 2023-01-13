@@ -5,6 +5,7 @@ import 'package:another_harvester_game/game_save.dart';
 import 'package:another_harvester_game/harvester_app.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame_audio/audio_pool.dart';
 import 'package:flame_audio/flame_audio.dart';
@@ -42,7 +43,7 @@ final Map<LogicalKeyboardKey, LogicalKeyboardKey> keyMap = {
 };
 
 class HarvesterGame extends Forge2DGame
-    with PanDetector, ScrollDetector, KeyboardEvents {
+    with TapDetector, ScrollDetector, KeyboardEvents {
   late HarvesterComponent harvester;
   late WheatFieldComponent wheatField;
   late final TextComponent _scoreComponent;
@@ -69,6 +70,9 @@ class HarvesterGame extends Forge2DGame
   bool started = false;
   bool running = false;
 
+  // TODO add pedal to bottom center of the screen
+  bool pedalPressed = false;
+
   double _levelTime = 30;
   double _timePassed = 0;
 
@@ -81,6 +85,9 @@ class HarvesterGame extends Forge2DGame
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+
+    // Set device orientation to landscape.
+    Flame.device.setLandscape();
 
     camera.viewport = FixedResolutionViewport(screenSize);
 
@@ -133,9 +140,9 @@ class HarvesterGame extends Forge2DGame
   }
 
   void start() async {
-    // if (!FlameAudio.bgm.isPlaying) {
-    //   FlameAudio.bgm.play('sounds/country-loop.wav');
-    // }
+    if (!FlameAudio.bgm.isPlaying) {
+      FlameAudio.bgm.play('sounds/country-loop.wav');
+    }
 
     _timePassed = 0;
     score = 0;
@@ -305,5 +312,26 @@ class HarvesterGame extends Forge2DGame
 
   void timeBonus() {
     _levelTime += 5;
+  }
+
+  @override
+  void onTapDown(TapDownInfo info) {
+    super.onTapDown(info);
+
+    pedalPressed = true;
+  }
+
+  @override
+  void onTapUp(TapUpInfo info) {
+    super.onTapUp(info);
+
+    pedalPressed = false;
+  }
+
+  @override
+  void onTapCancel() {
+    super.onTapCancel();
+
+    pedalPressed = false;
   }
 }

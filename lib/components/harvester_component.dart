@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'dart:ui';
 
+import 'package:another_harvester_game/utils.dart';
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:another_harvester_game/harvester_game.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 class HarvesterComponent extends BodyComponent<HarvesterGame> {
   final _size = Vector2(1, 1.556);
@@ -19,6 +23,10 @@ class HarvesterComponent extends BodyComponent<HarvesterGame> {
   final _forwardImpulse = 0.1;
   final _backwardImpulse = 0.05;
 
+  final _streamSubscriptions = <StreamSubscription>[];
+
+  double _accelerometerInput = 0.0;
+
   @override
   Future<void> onLoad() async {
     await super.onLoad();
@@ -27,6 +35,11 @@ class HarvesterComponent extends BodyComponent<HarvesterGame> {
         anchor: Anchor.center,
         size: _size,
         sprite: await gameRef.loadSprite('harvester_new.png')));
+
+    if (isMobile) {
+      _streamSubscriptions.add(userAccelerometerEvents
+          .listen((event) => _accelerometerInput = event.y));
+    }
   }
 
   @override
@@ -53,20 +66,22 @@ class HarvesterComponent extends BodyComponent<HarvesterGame> {
   void update(double dt) {
     super.update(dt);
 
-    if (!body.isAwake && gameRef.pressedKeySet.isEmpty) {
+    if (!gameRef.running && gameRef.pressedKeySet.isEmpty) {
       return;
     }
 
     // Use lazy initialization to not calculate normal if there is no input.
     late final Vector2 currentForwardNormal =
         body.worldVector(Vector2(0.0, -1.0));
-    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyW)) {
+    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyW) ||
+        (isMobile && !gameRef.pedalPressed)) {
       body.applyLinearImpulse(currentForwardNormal *
           _forwardImpulse *
           (gameRef.save.speedUpgrades + 1).toDouble());
     }
 
-    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyS)) {
+    if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyS) ||
+        gameRef.pedalPressed) {
       body.applyLinearImpulse(-currentForwardNormal *
           _backwardImpulse *
           (gameRef.save.speedUpgrades + 1).toDouble());
@@ -79,10 +94,23 @@ class HarvesterComponent extends BodyComponent<HarvesterGame> {
     if (gameRef.pressedKeySet.contains(LogicalKeyboardKey.keyD)) {
       body.applyTorque(_torque + gameRef.save.torqueUpgrades / 2);
     }
+
+    if (isMobile) {
+      body.applyTorque(_accelerometerInput * (5 + gameRef.save.torqueUpgrades));
+    }
   }
 
   @override
   void render(Canvas canvas) {
     // keep it empty to not draw white rect of BodyComponent
+  }
+
+  @override
+  void onRemove() {
+    super.onRemove();
+
+    for (var subscription in _streamSubscriptions) {
+      subscription.cancel();
+    }
   }
 }
