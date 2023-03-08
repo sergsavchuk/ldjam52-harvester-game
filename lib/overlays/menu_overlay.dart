@@ -1,21 +1,81 @@
 import 'dart:io';
 
 import 'package:another_harvester_game/harvester_game.dart';
+import 'package:another_harvester_game/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 typedef IntFunction = int Function();
 
-class MenuOverlay extends StatefulWidget {
+class MenuOverlay extends StatelessWidget {
   final HarvesterGame game;
 
-  const MenuOverlay(this.game, {super.key});
+  const MenuOverlay(this.game, {Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => MenuOverlayState();
+  Widget build(BuildContext context) {
+    return isMobile ? MobileMenuOverlay(game) : DesktopMenuOverlay(game);
+  }
 }
 
-class MenuOverlayState extends State<MenuOverlay> {
+class MobileMenuOverlay extends StatefulWidget {
+  const MobileMenuOverlay(this.game, {Key? key}) : super(key: key);
+
+  final HarvesterGame game;
+
+  @override
+  State<MobileMenuOverlay> createState() => _MobileMenuOverlayState();
+}
+
+class _MobileMenuOverlayState extends State<MobileMenuOverlay> {
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            const Text("Another harvester game"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Spacer(),
+                Stack(
+                  children: [
+                    Image.asset('assets/images/hay_bale.png'),
+                  ],
+                ),
+                // Spacer(),
+                const Icon(
+                  Icons.play_circle_outline_rounded,
+                  size: 200,
+                ),
+                // Spacer(),
+                Stack(
+                  children: [
+                    Image.asset('assets/images/harvester_new.png'),
+                  ],
+                ),
+                // Spacer(),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DesktopMenuOverlay extends StatefulWidget {
+  final HarvesterGame game;
+
+  const DesktopMenuOverlay(this.game, {super.key});
+
+  @override
+  State<StatefulWidget> createState() => DesktopMenuOverlayState();
+}
+
+class DesktopMenuOverlayState extends State<DesktopMenuOverlay> {
   bool upgradeInfoVisible = false;
   String upgradeInfoText = "Speed upgrade Cost: 1  Your money: 0";
 
