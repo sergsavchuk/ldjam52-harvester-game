@@ -1,16 +1,7 @@
-# flametest
+# LDJAM Harverster Game
+### [Play](https://sergsavchuk.github.io/#/) | [Jam Entry](https://ldjam.com/events/ludum-dare/52/another-harvester-game)
 
-Flutter project to test Flame game framework for flutter, particularly on web and desktop platforms
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Thougts
+ The game has perfomance issues due to the large number of rendered objects. And I have few ideas for optimization but, unfortunately don't have time to implement them at the moment 😮‍💨
+ Anyway, it was pretty fun to try Flame for the first time, but it's obvious that the developers of Flame and Flutter have a lot of work to do to make Flutter a cool game engine.
+ Definitly, I'll give it another try someday.
